@@ -108,6 +108,7 @@ GameObject:
   - 114: {fileID: 6612380}
   - 33: {fileID: 6612379}
   - 23: {fileID: 6612378}
+  - 114: {fileID: 6612389}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -210,10 +211,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a376b0b2363e3d44e8d18bff54a11a64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Init: 1
+  Init: 0
   width: 0
   height: 0
-  numberOfPasses: 2
+  numberOfPasses: 1
   DeathLimit: 4
   BirthLimit: 5
   outOfBoundsRule: 1
@@ -263,8 +264,8 @@ MonoBehaviour:
   GenType: 0
   seed: 
   randomSeed: 0
-  width: 20
-  height: 20
+  width: 100
+  height: 60
   ca_mask: 1
   mazeGen: {fileID: 0}
   rule45: {fileID: 0}
@@ -302,6 +303,21 @@ MonoBehaviour:
   _right: 6
   _top: 1
   _bottom: 5
+--- !u!114 &6612389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 6612377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83261c12665c1084c8422ce451ec2cb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxZones: 0
+  maxConnectionsPerZone: 0
+  minZoneRadius: 0
+  maxZoneRadius: 0
 --- !u!1 &616160751
 GameObject:
   m_ObjectHideFlags: 0
