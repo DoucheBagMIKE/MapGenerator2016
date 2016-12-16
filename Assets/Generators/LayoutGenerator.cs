@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using QuadTree;
 
- class Circle
+  public class Circle : QuadTree.IHasRectangle
 {
     public float radius;
     public Vector2 centerPos;
+    public UnityEngine.Rect Rect
+    {
+        get
+        {
+            return new Rect(centerPos.x - radius, centerPos.y - radius, radius * 2, radius * 2);
+        }
+    }
 
     public Circle (Vector2 CenterPos, float Radius)
     {
@@ -33,6 +41,11 @@ using System.Collections.Generic;
             return true;
         }
     }
+
+    public static bool pointInCircle (Circle circle, float x, float y)
+    {
+        return Mathf.Pow(x - circle.centerPos.x, 2) + Mathf.Pow(y - circle.centerPos.y, 2) < Mathf.Pow(circle.radius, 2);
+    }
 }
 
 public class LayoutGenerator : MonoBehaviour {
@@ -44,6 +57,8 @@ public class LayoutGenerator : MonoBehaviour {
     public int maxConnectionsPerZone;
     public float minZoneRadius;
     public float maxZoneRadius;
+
+    public QuadTree<Circle> qTree;
 
     public int CreateZone(Vector2 cPos, float radius)
     {
@@ -69,10 +84,13 @@ public class LayoutGenerator : MonoBehaviour {
         for(int i = 0; i < 1000;i++)
         {
             Vector2 RVector = new Vector2(Rand(), Rand()).normalized;
-            print(RVector.x.ToString() + " " + RVector.y.ToString());
+            //print(RVector.x.ToString() + " " + RVector.y.ToString());
             
         }
+        //create the quadtree
+        qTree = new QuadTree<Circle>(new Rect(Vector2.zero, new Vector2(MapGenerator.instance.width, MapGenerator.instance.height)));
 
+        Generate();
 	}
 
     void Generate ()
@@ -90,20 +108,43 @@ public class LayoutGenerator : MonoBehaviour {
         {
             int sID = fringe.Dequeue();
 
-            int numberOfConnections = rng.Next(maxConnectionsPerZone);
+            int numberOfConnections = 1;//rng.Next(maxConnectionsPerZone);
 
-            while(Connections.connectionCount(sID) != numberOfConnections)
+            while (Connections.connectionCount(sID) != numberOfConnections)
             {
                 Vector2 RVector = new Vector2(Rand(), Rand()).normalized;
-                float radius = (float)(rng.NextDouble() * maxZoneRadius) + minZoneRadius;
+                float radius = (float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius;
 
-                RVector =  Zones[sID].centerPos + (RVector * (Zones[sID].radius + radius));
+                RVector = Zones[sID].centerPos + (RVector * (Zones[sID].radius + radius));
 
                 Circle c = new Circle(RVector, radius);
+                List<Circle> res = new List<Circle>();
+
+                qTree.GetObjects(new Rect(RVector.x - radius, RVector.y - radius, radius, radius), ref res);
+                bool collision = false;
+                foreach (Circle circle in res)
+                {
+                    if (Circle.Intersect(c, circle))
+                    {
+                        collision = true;
+                        break;
+                    }
+                } 
+                 if (Utility.Contains(qTree.QuadRect, c) && !collision)
+                {
+                    qTree.Insert(c);
+
+                    int nID = Connections.createNode();
+                    Zones.Add(nID, c);
+
+                    Connections.addConnection(sID, nID);
+                }
 
 
             }
         }
+
+        print(qTree.Count);
 
 
     }

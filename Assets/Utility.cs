@@ -55,4 +55,51 @@ public class Utility {
         }
         return ret;
     }
+
+    public static bool Contains(Rect R1, Rect R2)
+    {
+        return (R2.x + R2.width) < (R1.x + R1.width)
+            && (R2.x) > (R1.x)
+            && (R2.y) > (R1.y)
+            && (R2.y + R2.height) < (R1.y + R1.height);
+    }
+
+    public static bool Contains(Rect rect, Circle circle)
+    {
+        float dTL = Mathf.Sqrt((rect.xMin - circle.centerPos.x) * (rect.xMin - circle.centerPos.x) + (rect.yMin - circle.centerPos.y) * (rect.yMin - circle.centerPos.y));
+        float dTR = Mathf.Sqrt((rect.xMax - circle.centerPos.x) * (rect.xMax - circle.centerPos.x) + (rect.yMin - circle.centerPos.y) * (rect.yMin - circle.centerPos.y));
+        float dBL = Mathf.Sqrt((rect.xMin - circle.centerPos.x) * (rect.xMin - circle.centerPos.x) + (rect.yMax - circle.centerPos.y) * (rect.yMax - circle.centerPos.y));
+        float dBR = Mathf.Sqrt((rect.xMax - circle.centerPos.x) * (rect.xMax - circle.centerPos.x) + (rect.yMax - circle.centerPos.y) * (rect.yMax - circle.centerPos.y));
+
+        return rect.Contains(circle.centerPos) && dTL >= circle.radius && dTR >= circle.radius && dBL >= circle.radius && dBR >= circle.radius;
+    }
+
+    public static bool Intersects (Rect R1, Rect R2)
+    {
+        if (R1.left < R2.right && R1.right > R2.left && R1.top < R2.bottom && R1.bottom > R2.top)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static bool Intersects (Circle circle, Rect rect)
+    {
+        // Find the closest point to the circle within the rectangle
+        // Assumes axis alignment! ie rect must not be rotated
+        var closestX = Mathf.Clamp(circle.centerPos.x, rect.x, rect.x + rect.width);
+        var closestY = Mathf.Clamp(circle.centerPos.y, rect.y, rect.y + rect.height);
+
+        // Calculate the distance between the circle's center and this closest point
+        var distanceX = circle.centerPos.x - closestX;
+        var distanceY = circle.centerPos.y - closestY;
+
+        // If the distance is less than the circle's radius, an intersection occurs
+        var distanceSquared = (distanceX * distanceX) + (distanceY * distanceY);
+
+        return distanceSquared < (circle.radius * circle.radius);
+
+    }
+
+
 }
