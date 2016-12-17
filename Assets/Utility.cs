@@ -66,12 +66,7 @@ public class Utility {
 
     public static bool Contains(Rect rect, Circle circle)
     {
-        float dTL = Mathf.Sqrt((rect.xMin - circle.centerPos.x) * (rect.xMin - circle.centerPos.x) + (rect.yMin - circle.centerPos.y) * (rect.yMin - circle.centerPos.y));
-        float dTR = Mathf.Sqrt((rect.xMax - circle.centerPos.x) * (rect.xMax - circle.centerPos.x) + (rect.yMin - circle.centerPos.y) * (rect.yMin - circle.centerPos.y));
-        float dBL = Mathf.Sqrt((rect.xMin - circle.centerPos.x) * (rect.xMin - circle.centerPos.x) + (rect.yMax - circle.centerPos.y) * (rect.yMax - circle.centerPos.y));
-        float dBR = Mathf.Sqrt((rect.xMax - circle.centerPos.x) * (rect.xMax - circle.centerPos.x) + (rect.yMax - circle.centerPos.y) * (rect.yMax - circle.centerPos.y));
-
-        return rect.Contains(circle.centerPos) && dTL >= circle.radius && dTR >= circle.radius && dBL >= circle.radius && dBR >= circle.radius;
+        return Contains(rect, circle.Rect);
     }
 
     public static bool Intersects (Rect R1, Rect R2)

@@ -5,7 +5,7 @@ public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator instance;
 
-    public enum GenerateType { Maze_Structure, CA_45Rule, Gradient, RandomWalk, PerlinWorm, MaskTest, MazeTest};
+    public enum GenerateType { Maze_Structure, CA_45Rule, Gradient, RandomWalk, PerlinWorm, MaskTest, MazeTest, AbstractLayoutTest};
 
     public GenerateType GenType;
     public string seed;
@@ -28,6 +28,7 @@ public class MapGenerator : MonoBehaviour {
     RandomWalk randomWalk;
     PerlinWorm perlinWorm;
     PolygonGenerator polyGen;
+    LayoutGenerator layoutGen;
 
     public int[,] Map;
 
@@ -46,7 +47,7 @@ public class MapGenerator : MonoBehaviour {
         randomWalk = gameObject.GetComponent<RandomWalk>();
         perlinWorm = gameObject.GetComponent<PerlinWorm>();
         polyGen = gameObject.GetComponent<PolygonGenerator>();
-        
+        layoutGen = gameObject.GetComponent<LayoutGenerator>();
 
         if (randomSeed)
         {
@@ -101,6 +102,10 @@ public class MapGenerator : MonoBehaviour {
                 int[,] test = new int[10, 10];
                 mazeGen.Generate(5, 5, test);
                 Map = test;
+                break;
+            case GenerateType.AbstractLayoutTest:
+                layoutGen.Generate();
+                //layoutGen.Test();
                 break;
         }
         polyGen.Generate();
