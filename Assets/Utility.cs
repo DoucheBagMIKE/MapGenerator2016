@@ -96,5 +96,155 @@ public class Utility {
 
     }
 
+    // A* pathfinding
+    public static void GetPath(int startID, int endID, Graph connections, Dictionary<int, Circle> Zones, ref List<int> path)
+    {
+        List<int> open = new List<int>(); // The "Fringe Nodes" the nodes that the algorithim is working with currently.
+        List<int> closed = new List<int>(); // Nodes that have been Processed;
+        Dictionary<int, int> moveCost = new Dictionary<int, int>(); // Distance in Nodes from the Start Location.
+        Dictionary<int, float> hCost = new Dictionary<int, float>();// distance to the end Node fromt he curent node.
+        Dictionary<int, float> score = new Dictionary<int, float>();// total score that the sort algorithim works with. (movecost+hcost)
+        Dictionary<int, int> parent = new Dictionary<int, int>();// stores the ID of the Node that this node came from.
+
+        moveCost.Add(startID, 0);
+
+        Vector2 v = Zones[startID].centerPos - Zones[endID].centerPos;
+        hCost.Add(startID, Mathf.Abs(v.x) + Mathf.Abs(v.y));
+
+        score.Add(startID, hCost[startID]);
+
+        parent.Add(startID, startID);// set the start nodes parent to itself;
+
+        open.Add(startID);
+
+        while (open.Count != 0 && !closed.Contains(endID))
+        {
+            // find the Node with the lowest score, remove it from the open list and add it to the closed list.
+            BSort(score, open);
+            int selectedID = open[0];
+            closed.Add(selectedID);
+            open.RemoveAt(0);
+
+            // for each node connected to the selected node thats not in the open list already,
+            //we add it to the open list and calculate its movement score.
+            //If the connected node is already in the open list, we Check if the movement score plus the hursetic score is lower when we use the current generated path to get there,
+            //If it is, update its score and update its parent as well.
+
+            foreach (int adjacentID in connections.GetAdjecent(selectedID))
+            {
+                if(closed.Contains(adjacentID))
+                {
+                    continue;
+                }
+
+                if (!open.Contains(adjacentID))
+                {
+                    open.Add(adjacentID);
+
+                    moveCost.Add(adjacentID, moveCost[selectedID] + 1);
+
+                    v = Zones[adjacentID].centerPos - Zones[endID].centerPos;
+                    hCost.Add(adjacentID, Mathf.Abs(v.x) + Mathf.Abs(v.y));
+
+                    score[adjacentID] = moveCost[adjacentID] + hCost[adjacentID];
+
+                    parent.Add(adjacentID, selectedID);
+                }
+                else // openlist already contains this id.
+                {
+                    if (score[adjacentID] > moveCost[selectedID] + 1 + hCost[adjacentID])
+                    {
+                        moveCost[adjacentID] = moveCost[selectedID] + 1;
+                        score[adjacentID] = moveCost[adjacentID] + hCost[adjacentID];
+
+                        parent[adjacentID] = selectedID;
+                    }
+                }
+            }
+
+        }
+        // return the path by going through all the parent nodes until we find the start node.
+        int sID = endID;
+
+        while (!path.Contains(startID))
+        {
+            path.Add(sID);
+            sID = parent[sID];
+        }
+
+    }
+
+    //BubbleSort. an inefficient sorting algorithom, works for small datasets.
+    public static void BSort (List<int> list)
+    {
+        BSort(list, list);
+    }
+    
+    public static void BSort(List<int> cmpList, List<int> writeList)
+    {
+        //kindof a weird implementation, does more than it should. will have to look at this again.
+        if (cmpList.Count != writeList.Count)
+        {
+            Debug.Log("Sort Failed.. listes were diffrent sizes.");
+            return;
+        }
+
+        if (cmpList.Count <= 1)
+        {
+            return;
+        }
+
+        bool foundSwap = true;
+
+        while (foundSwap)
+        {
+            foundSwap = false;
+            for(int i = 0; i < cmpList.Count - 1; i++)
+            {
+                int a = cmpList[i];
+                int b = cmpList[i + 1];
+                int aa = writeList[i];
+                int bb = writeList[i + 1];
+
+                if (a > b)
+                {
+                    writeList[i] = bb;
+                    writeList[i + 1] = aa;
+                    cmpList[i] = b;
+                    cmpList[i + 1] = a;
+                    foundSwap = true;
+                }
+            }
+        }
+    }
+
+    public static void BSort(Dictionary<int, float> cmpList, List<int> writeList)
+    {
+        if (cmpList.Count <= 1)
+        {
+            return;
+        }
+
+        bool foundSwap = true;
+
+        while (foundSwap)
+        {
+            foundSwap = false;
+            for (int i = 0; i < writeList.Count - 1; i++)
+            {
+                int a = writeList[i];
+                int b = writeList[i + 1];
+
+                if (cmpList[writeList[i]] > cmpList[writeList[i + 1]])
+                {
+                    writeList[i] = b;
+                    writeList[i + 1] = a;
+
+                    foundSwap = true;
+                }
+            }
+        }
+    }
+
 
 }

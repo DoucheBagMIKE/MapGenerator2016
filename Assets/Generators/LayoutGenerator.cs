@@ -78,8 +78,9 @@ public class LayoutGenerator : MonoBehaviour {
 	}
 
     public void Generate ()
+
     {
-        // finge shoule be a list so we can randomly pick any of the items on the fringe.
+        // finge shoule be a list so we can randomly pick any of the items on the fringe. should effect how the levels look. worth a try,
         Queue<int> fringe = new Queue<int>();
 
         int width = MapGenerator.instance.width;
@@ -144,6 +145,21 @@ public class LayoutGenerator : MonoBehaviour {
 
 
             }
+        }
+        //A* Test
+        List<int> pathIDs = new List<int>();
+        Utility.GetPath(Connections.keys[rng.Next(0, Connections.Count + 1)] , Connections.keys[rng.Next(0, Connections.Count + 1)], Connections, Zones, ref pathIDs);
+        foreach (int i in pathIDs)
+        {
+            print(i);
+        }
+        foreach(int nodeID in Connections.keys)
+        {
+            //foreach(int pID in qTree.GetObjects())
+            //{
+            //    Utility.GetPath(nodeID, pID, Connections, Zones, ref pathIDs);
+
+            //}
         }
         DrawDebug();
     }

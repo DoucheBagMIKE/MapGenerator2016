@@ -5,6 +5,25 @@ using System.Collections.Generic;
 public class Graph {
     int nextID = 0;
     Dictionary<int, List<int>> adjecencyList;
+    public int Count
+    {
+        get
+        {
+            return adjecencyList.Count;
+        }
+    }
+    public List<int> keys
+    {
+        get
+        {
+            List<int> keys = new List<int>();
+            foreach(int k in adjecencyList.Keys)
+            {
+                keys.Add(k);
+            }
+            return keys;
+        }
+    }
 
     public Graph ()
     {
