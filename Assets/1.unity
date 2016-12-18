@@ -317,7 +317,7 @@ MonoBehaviour:
   maxZones: 1
   maxConnectionsPerZone: 6
   minZoneRadius: 2.5
-  maxZoneRadius: 10
+  maxZoneRadius: 15.28
 --- !u!1 &616160751
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using QuadTree;
 
   public class Circle : QuadTree.IHasRectangle
 {
+    public int ID; 
     public float radius;
     public Vector2 centerPos;
     public UnityEngine.Rect Rect
@@ -92,6 +93,7 @@ public class LayoutGenerator : MonoBehaviour {
         // create and add the first zone to the qTree
         int id = Connections.createNode();
         Circle sC = new Circle(-Vector2.one, (float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius);
+        sC.ID = id;
 
         while (!Utility.Contains(qTree.QuadRect, sC)) {
             sC.centerPos.Set(rng.Next(0, width), rng.Next(0, height));
@@ -136,6 +138,7 @@ public class LayoutGenerator : MonoBehaviour {
                     qTree.Insert(c);
 
                     int nID = Connections.createNode();
+                    c.ID = nID;
                     Zones.Add(nID, c);
 
                     Connections.addConnection(sID, nID);
@@ -146,21 +149,43 @@ public class LayoutGenerator : MonoBehaviour {
 
             }
         }
-        //A* Test
+
         List<int> pathIDs = new List<int>();
-        Utility.GetPath(Connections.keys[rng.Next(0, Connections.Count + 1)] , Connections.keys[rng.Next(0, Connections.Count + 1)], Connections, Zones, ref pathIDs);
-        foreach (int i in pathIDs)
-        {
-            print(i);
-        }
+        float MAXDISTFORCONNECTION = 5f;
+        int MINLENGTHOFLOOP = 6;
+
         foreach(int nodeID in Connections.keys)
         {
-            //foreach(int pID in qTree.GetObjects())
-            //{
-            //    Utility.GetPath(nodeID, pID, Connections, Zones, ref pathIDs);
+            Vector2 pos = Zones[nodeID].centerPos;
+            float r = Zones[nodeID].radius;
 
-            //}
+            List<Circle> objs = new List<Circle>();
+            qTree.GetObjects(new Rect(pos.x - MAXDISTFORCONNECTION, pos.y - MAXDISTFORCONNECTION, (r * 2) + MAXDISTFORCONNECTION, (r * 2) + MAXDISTFORCONNECTION), ref objs);
+            foreach (Circle c in objs)
+            {
+                if(Connections.GetAdjecent(nodeID).Contains(c.ID) || nodeID == c.ID)
+                {
+                    continue;
+                }
+                Vector2 v = Zones[nodeID].centerPos - c.centerPos;
+                float dist = (Mathf.Abs(v.x) + Mathf.Abs(v.y)) - (Zones[nodeID].radius + c.radius);
+                print(dist);
+                if (dist <= MAXDISTFORCONNECTION)
+                {
+                    pathIDs.Clear();
+                    Utility.GetPath(nodeID, c.ID, Connections, Zones, ref pathIDs);
+                    if (pathIDs.Count >= MINLENGTHOFLOOP)
+                    {
+                        Connections.addConnection(nodeID, c.ID);
+                    }
+                }
+                
+
+
+
+            }
         }
+
         DrawDebug();
     }
 
@@ -191,7 +216,6 @@ public class LayoutGenerator : MonoBehaviour {
     void DrawDebug()
     {
         List<Circle> Res = new List<Circle>();
-        //qTree.GetAllObjects(ref Res);
         Dictionary<int, GameObject> c_Objs = new Dictionary<int, GameObject>();
         foreach (int key in Zones.Keys)
         {
@@ -203,7 +227,7 @@ public class LayoutGenerator : MonoBehaviour {
 
             c_Objs.Add(key, obj);
         }
-
+        List<LineRenderer> lines = new List<LineRenderer>();
         List<int> visited = new List<int>();
         Queue<int> f = new Queue<int>();
         f.Enqueue(1);
@@ -216,7 +240,10 @@ public class LayoutGenerator : MonoBehaviour {
                 {
                     continue;
                 }
-                LineRenderer lRend = c_Objs[cid].AddComponent<LineRenderer>();
+                GameObject lObj = new GameObject();
+                LineRenderer lRend = lObj.AddComponent<LineRenderer>();
+                lObj.transform.parent = c_Objs[cid].transform;
+
                 lRend.SetPositions(new Vector3[2] { Zones[id].centerPos, Zones[cid].centerPos });
                 lRend.material = Resources.Load<Material>("DefaultMat");
                 lRend.SetColors(Color.red, Color.red);
