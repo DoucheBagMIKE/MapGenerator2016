@@ -54,10 +54,12 @@ public class LayoutGenerator : MonoBehaviour {
     Graph Connections;
     Dictionary<int, Circle> Zones;
 
-    public int maxZones;
+    //public int maxZones;
     public int maxConnectionsPerZone;
     public float minZoneRadius;
     public float maxZoneRadius;
+    public float MAXDISTFORCONNECTION;
+    public int MINLENGTHOFLOOP;
 
     public QuadTree<Circle> qTree;
 
@@ -87,16 +89,16 @@ public class LayoutGenerator : MonoBehaviour {
         int width = MapGenerator.instance.width;
         int height = MapGenerator.instance.height;
 
-        float sx = (float)rng.NextDouble() * width;
-        float sy = (float)rng.NextDouble() * height;
+        float sx = (float)rng.Next(0, width + 1);
+        float sy = (float)rng.Next(0, height + 1);
 
         // create and add the first zone to the qTree
         int id = Connections.createNode();
-        Circle sC = new Circle(-Vector2.one, (float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius);
+        Circle sC = new Circle(-Vector2.one, Mathf.RoundToInt((float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius));
         sC.ID = id;
 
         while (!Utility.Contains(qTree.QuadRect, sC)) {
-            sC.centerPos.Set(rng.Next(0, width), rng.Next(0, height));
+            sC.centerPos.Set(rng.Next(0, width + 1), rng.Next(0, height + 1));
         }
 
         qTree.Insert(sC);
@@ -108,18 +110,18 @@ public class LayoutGenerator : MonoBehaviour {
             int sID = fringe.Dequeue();
             int trys = 30;
 
-            while (Connections.connectionCount(sID) != maxConnectionsPerZone && trys > 0)
+            while (Connections.connectionCount(sID) < maxConnectionsPerZone && trys > 0)
             {
                 trys--;
                 Vector2 RVector = new Vector2(Rand(), Rand()).normalized;
-                float radius = (float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius;
+                float radius = Mathf.RoundToInt((float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius);
 
                 RVector = Zones[sID].centerPos + (RVector * (Zones[sID].radius + radius));
 
-                Circle c = new Circle(RVector, radius);
+                Circle c = new Circle(new Vector2(Mathf.RoundToInt(RVector.x), Mathf.RoundToInt(RVector.y)), radius);
 
                 List<Circle> res = new List<Circle>();;
-                qTree.GetObjects(new Rect(RVector.x - radius, RVector.y - radius, radius * 2, radius * 2), ref res);
+                qTree.GetObjects(new Rect((RVector.x - radius) - MAXDISTFORCONNECTION, (RVector.y - radius) - MAXDISTFORCONNECTION, radius * 2, radius * 2), ref res);
 
                 bool collision = false;
                 foreach (Circle circle in res)
@@ -151,11 +153,15 @@ public class LayoutGenerator : MonoBehaviour {
         }
 
         List<int> pathIDs = new List<int>();
-        float MAXDISTFORCONNECTION = 5f;
-        int MINLENGTHOFLOOP = 6;
+        
 
         foreach(int nodeID in Connections.keys)
         {
+            if(Connections.GetAdjecent(nodeID).Count == maxConnectionsPerZone)
+            {
+                continue;
+            }
+
             Vector2 pos = Zones[nodeID].centerPos;
             float r = Zones[nodeID].radius;
 
@@ -163,13 +169,13 @@ public class LayoutGenerator : MonoBehaviour {
             qTree.GetObjects(new Rect(pos.x - MAXDISTFORCONNECTION, pos.y - MAXDISTFORCONNECTION, (r * 2) + MAXDISTFORCONNECTION, (r * 2) + MAXDISTFORCONNECTION), ref objs);
             foreach (Circle c in objs)
             {
-                if(Connections.GetAdjecent(nodeID).Contains(c.ID) || nodeID == c.ID)
+                if(nodeID == c.ID || Connections.GetAdjecent(nodeID).Contains(c.ID)|| Connections.GetAdjecent(c.ID).Count >= maxConnectionsPerZone)
                 {
                     continue;
                 }
-                Vector2 v = Zones[nodeID].centerPos - c.centerPos;
-                float dist = (Mathf.Abs(v.x) + Mathf.Abs(v.y)) - (Zones[nodeID].radius + c.radius);
-                print(dist);
+
+                float dist = Mathf.Sqrt(Mathf.Pow((Zones[nodeID].centerPos.x - c.centerPos.x), 2) + Mathf.Pow((Zones[nodeID].centerPos.y - c.centerPos.y), 2)) - (Zones[nodeID].radius + c.radius);
+
                 if (dist <= MAXDISTFORCONNECTION)
                 {
                     pathIDs.Clear();
@@ -180,9 +186,6 @@ public class LayoutGenerator : MonoBehaviour {
                     }
                 }
                 
-
-
-
             }
         }
 
@@ -200,16 +203,25 @@ public class LayoutGenerator : MonoBehaviour {
         Vector2 RVector = new Vector2(Rand(), Rand()).normalized;
         float radius = (float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius;
 
-        RVector = c1.centerPos + (RVector * (c1.radius + radius));
+        RVector = c1.centerPos + (RVector * (c1.radius + radius + 1f));
 
         Circle c2 = new Circle(RVector, radius);
+
+        Vector2 v = c1.centerPos - c2.centerPos;
+
+        //dist between 2 circles;
+        float x = Mathf.Pow((c1.centerPos.x - c2.centerPos.x), 2);
+        float y = Mathf.Pow((c1.centerPos.y - c2.centerPos.y), 2);
+        float r = (c1.radius + c2.radius);
+
+        float dist = Mathf.Sqrt(x+y) - r;
+        print(dist);
+
         foreach (Circle c in new Circle[2]{c1, c2}) 
         {
             GameObject obj = Instantiate(Resources.Load("Circle", typeof(GameObject))) as GameObject;
             obj.transform.localScale = new Vector3(c.radius * 2, c.radius * 2, 1f);
             obj.transform.position = c.centerPos;
-
-
         }
     }
 

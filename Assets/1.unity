@@ -314,10 +314,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83261c12665c1084c8422ce451ec2cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxZones: 1
-  maxConnectionsPerZone: 6
-  minZoneRadius: 2.5
-  maxZoneRadius: 15.28
+  maxConnectionsPerZone: 2
+  minZoneRadius: 5
+  maxZoneRadius: 7
+  MAXDISTFORCONNECTION: 2
+  MINLENGTHOFLOOP: 3
 --- !u!1 &616160751
 GameObject:
   m_ObjectHideFlags: 0
