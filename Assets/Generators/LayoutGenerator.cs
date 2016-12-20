@@ -201,9 +201,10 @@ public class LayoutGenerator : MonoBehaviour {
     {
         Circle c1 = new Circle(Vector2.zero, 1f);
         Vector2 RVector = new Vector2(Rand(), Rand()).normalized;
-        float radius = (float)(rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius;
+        float radius = Mathf.Round(((float)rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius);
 
-        RVector = c1.centerPos + (RVector * (c1.radius + radius + 1f));
+        RVector = c1.centerPos + (RVector * (c1.radius + radius));
+        RVector.Set(Mathf.Round(RVector.x), Mathf.Round(RVector.y));
 
         Circle c2 = new Circle(RVector, radius);
 
@@ -215,7 +216,9 @@ public class LayoutGenerator : MonoBehaviour {
         float r = (c1.radius + c2.radius);
 
         float dist = Mathf.Sqrt(x+y) - r;
+
         print(dist);
+        //c2.radius -= Mathf.Abs(dist);
 
         foreach (Circle c in new Circle[2]{c1, c2}) 
         {

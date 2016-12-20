@@ -246,5 +246,31 @@ public class Utility {
         }
     }
 
+    public static Vector2 DDALine (Vector2 p1, Vector2 p2)
+    {
+        Vector2 diff = p1 - p2;
+        float Steps;
+
+        if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
+            Steps = Mathf.Abs(diff.x);
+        else
+            Steps = Mathf.Abs(diff.y);
+
+        float Xincrement = diff.x / Steps;
+        float Yincrement = diff.y / Steps;
+
+        float x = 0;
+        float y = 0;
+
+        for (int v = 0; v < Steps; v++)
+        {
+           
+            x += Xincrement;
+            y += Yincrement;
+            //putpixel(Round(x), Round(y));
+        }
+        return new Vector2(Mathf.Round(x), Mathf.Round(y));
+    }
+
 
 }
