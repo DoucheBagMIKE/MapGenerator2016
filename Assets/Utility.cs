@@ -246,9 +246,9 @@ public class Utility {
         }
     }
 
-    public static Vector2 DDALine (Vector2 p1, Vector2 p2)
+    public static Vector2 DDALine (Circle p1, Circle p2)
     {
-        Vector2 diff = p1 - p2;
+        Vector2 diff = p1.centerPos - p2.centerPos;
         float Steps;
 
         if (Mathf.Abs(diff.x) > Mathf.Abs(diff.y))
@@ -259,16 +259,24 @@ public class Utility {
         float Xincrement = diff.x / Steps;
         float Yincrement = diff.y / Steps;
 
-        float x = 0;
-        float y = 0;
+        float x = p1.centerPos.x;
+        float y = p2.centerPos.y;
 
-        for (int v = 0; v < Steps; v++)
+        float Distance = -1;
+
+        while (Distance < 0)
         {
-           
             x += Xincrement;
             y += Yincrement;
-            //putpixel(Round(x), Round(y));
+            Distance = Mathf.Sqrt(Mathf.Pow((p1.centerPos.x - x), 2) + Mathf.Pow((p1.centerPos.y - y), 2)) - (p1.radius + p2.radius);
         }
+        //for (int v = 0; v < Steps; v++)
+        //{
+           
+        //    x += Xincrement;
+        //    y += Yincrement;
+        //    //putpixel(Round(x), Round(y));
+        //}
         return new Vector2(Mathf.Round(x), Mathf.Round(y));
     }
 

@@ -118,10 +118,11 @@ public class LayoutGenerator : MonoBehaviour {
 
                 RVector = Zones[sID].centerPos + (RVector * (Zones[sID].radius + radius));
 
-                Circle c = new Circle(new Vector2(Mathf.RoundToInt(RVector.x), Mathf.RoundToInt(RVector.y)), radius);
+                Circle c = new Circle(new Vector2(RVector.x, RVector.y), radius);
+                c.centerPos = Utility.DDALine(Zones[sID], c);// sets the position to the closest intger position ttha doesnt collide with the other circle..
 
                 List<Circle> res = new List<Circle>();;
-                qTree.GetObjects(new Rect((RVector.x - radius) - MAXDISTFORCONNECTION, (RVector.y - radius) - MAXDISTFORCONNECTION, radius * 2, radius * 2), ref res);
+                qTree.GetObjects(new Rect((c.centerPos.x - radius) - MAXDISTFORCONNECTION, (c.centerPos.y - radius) - MAXDISTFORCONNECTION, (radius * 2) + MAXDISTFORCONNECTION, radius * 2 + MAXDISTFORCONNECTION), ref res);
 
                 bool collision = false;
                 foreach (Circle circle in res)
@@ -200,26 +201,25 @@ public class LayoutGenerator : MonoBehaviour {
     public void Test()
     {
         Circle c1 = new Circle(Vector2.zero, 1f);
+
         Vector2 RVector = new Vector2(Rand(), Rand()).normalized;
         float radius = Mathf.Round(((float)rng.NextDouble() * (maxZoneRadius - minZoneRadius)) + minZoneRadius);
 
         RVector = c1.centerPos + (RVector * (c1.radius + radius));
-        RVector.Set(Mathf.Round(RVector.x), Mathf.Round(RVector.y));
 
         Circle c2 = new Circle(RVector, radius);
-
-        Vector2 v = c1.centerPos - c2.centerPos;
+        c2.centerPos = Utility.DDALine(c1, c2);
 
         //dist between 2 circles;
         float x = Mathf.Pow((c1.centerPos.x - c2.centerPos.x), 2);
         float y = Mathf.Pow((c1.centerPos.y - c2.centerPos.y), 2);
         float r = (c1.radius + c2.radius);
 
-        float dist = Mathf.Sqrt(x+y) - r;
+        float dist = (float)System.Math.Round(Mathf.Sqrt(x + y), 2) - r;
 
+        print(c1.centerPos.x.ToString() + " " + c1.centerPos.x.ToString() + "  " + c1.radius.ToString());
+        print(c2.centerPos.x.ToString() + " " + c2.centerPos.x.ToString() + "  " + c2.radius.ToString());
         print(dist);
-        //c2.radius -= Mathf.Abs(dist);
-
         foreach (Circle c in new Circle[2]{c1, c2}) 
         {
             GameObject obj = Instantiate(Resources.Load("Circle", typeof(GameObject))) as GameObject;
@@ -235,10 +235,10 @@ public class LayoutGenerator : MonoBehaviour {
         foreach (int key in Zones.Keys)
         {
             Circle c = Zones[key];
-            GameObject obj = Instantiate(Resources.Load("Circle", typeof(GameObject))) as GameObject;
+            GameObject obj = new GameObject();//Instantiate(Resources.Load("Circle", typeof(GameObject))) as GameObject;
             obj.transform.localScale = new Vector3(c.radius * 2, c.radius * 2, 1f);
             obj.transform.position = new Vector3(c.centerPos.x, c.centerPos.y, 0);
-            obj.GetComponent<Renderer>().sortingOrder = 0;
+            //obj.GetComponent<Renderer>().sortingOrder = 0;
 
             c_Objs.Add(key, obj);
         }
@@ -268,6 +268,25 @@ public class LayoutGenerator : MonoBehaviour {
                 if (!f.Contains(cid) && !visited.Contains(cid))
                 {
                     f.Enqueue(cid);
+                }
+            }
+        }
+    }
+
+    public void TestMap ()
+    {
+        foreach (Circle c in Zones.Values)
+        {
+            int[,] map = MapGenerator.instance.Map;
+            for(int y = (int)(c.centerPos.y - c.radius); y < c.centerPos.y + c.radius; y++)
+            {
+                for(int x  = (int)(c.centerPos.x - c.radius); x < c.centerPos.x + c.radius; x++)
+                {
+                    float dist = ((c.centerPos.x - x) * (c.centerPos.x - x) + (c.centerPos.y - y) * (c.centerPos.y - y));
+                    if (dist < (c.radius) * (c.radius))
+                    {
+                        map[x, y] = 1;
+                    }
                 }
             }
         }

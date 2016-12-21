@@ -104,8 +104,9 @@ public class MapGenerator : MonoBehaviour {
                 Map = test;
                 break;
             case GenerateType.AbstractLayoutTest:
-                //layoutGen.Generate();
-                layoutGen.Test();
+                layoutGen.Generate();
+                layoutGen.TestMap();
+                //layoutGen.Test();
                 break;
         }
         polyGen.Generate();
