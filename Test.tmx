@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="Floor" tilewidth="16" tileheight="16" tilecount="819" columns="21">
+  <image source="Assets/DawnLike/Objects/Floor.png" trans="ffffff" width="336" height="624"/>
+ </tileset>
+ <tileset firstgid="820" name="Wall" tilewidth="16" tileheight="16" tilecount="1020" columns="20">
+  <image source="Assets/DawnLike/Objects/Wall.png" trans="ffffff" width="320" height="816"/>
+ </tileset>
+</map>

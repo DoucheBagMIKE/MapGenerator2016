@@ -275,6 +275,7 @@ public class LayoutGenerator : MonoBehaviour {
 
     public void TestMap ()
     {
+        // draws the zones into the map array.
         foreach (Circle c in Zones.Values)
         {
             int[,] map = MapGenerator.instance.Map;

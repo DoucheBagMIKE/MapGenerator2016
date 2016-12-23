@@ -62,6 +62,8 @@ public class MapGenerator : MonoBehaviour {
 
     void Start ()
     {
+        map tmxMap = Serialization<map>.DeserializeFromXmlFile("test.tmx");
+        //print(tmxMap.tilesets[0].name);
         Generate();
     }
     void Generate ()
