@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using ClipperLib;
 
 public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator instance;
 
-    public enum GenerateType { Maze_Structure, CA_45Rule, Gradient, RandomWalk, PerlinWorm, MaskTest, MazeTest, AbstractLayoutTest};
+    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, MazeTest, AbstractLayoutTest};
 
     public GenerateType GenType;
     public string seed;
@@ -34,7 +35,8 @@ public class MapGenerator : MonoBehaviour {
 
     public int RemoveDeadEndsIterations;
 
-    // Use this for initialization
+     public TmxFile Tmx;
+
     void Awake()
     {
         if (instance == null)
@@ -62,10 +64,27 @@ public class MapGenerator : MonoBehaviour {
 
     void Start ()
     {
-        map tmxMap = Serialization<map>.DeserializeFromXmlFile("test.tmx");
-        //print(tmxMap.tilesets[0].name);
+        Tmx = Serialization<TmxFile>.DeserializeFromXmlFile("test.tmx");
+        if (Tmx != null)
+        {
+            print(Tmx.tileset[0].tile[0].objectgroup.obj[0].polygon.points);// lol wtf tiled..
+        }
+        foreach(IntPoint p in Tmx.getTileColliderInfo(0))
+        {
+            print(string.Format("{0},{1}", p.X, p.Y));
+        }
+
         Generate();
     }
+
+    void Update()
+    {
+        if (Input.GetAxis("Fire1") == 1f)
+        {
+            Generate();
+        }
+    }
+
     void Generate ()
     {
         Map = new int[width, height];
@@ -84,10 +103,6 @@ public class MapGenerator : MonoBehaviour {
                 break;
             case GenerateType.CA_45Rule:
                 Map = rule45.Generate(width, height);
-                break;
-            case GenerateType.Gradient:
-                gradient.Generate();
-                //Map = gradient.Value;
                 break;
             case GenerateType.RandomWalk:
                 randomWalk.Generate();
@@ -108,11 +123,11 @@ public class MapGenerator : MonoBehaviour {
             case GenerateType.AbstractLayoutTest:
                 layoutGen.Generate();
                 layoutGen.TestMap();
-                //layoutGen.Test();
                 break;
         }
         polyGen.Generate();
     }
+
     void GenMazeStructure()
     {
         structGen.Generate();
@@ -122,66 +137,5 @@ public class MapGenerator : MonoBehaviour {
             mazeGen.Sparsify(Map);
         }
     }
-
-    void Update()
-    {
-        if (Input.GetAxis("Fire1") == 1f)
-        {
-            Generate();
-        }
-    }
-    //void OnDrawGizmos()
-    //{
-    //    if (Map != null)
-    //    {
-    //        switch(GenType)
-    //        {
-    //            case GenerateType.Gradient:
-    //                DrawGradient();
-    //                break;
-    //            default:
-    //                DrawMap();
-    //                break;
-    //        }
-    //    }
-    //}
-
-    //void DrawMap ()
-    //{
-    //    for (int x = 0; x < width; x++)
-    //    {
-    //        for (int y = 0; y < height; y++)
-    //        {
-    //            switch (Map[x, y])
-    //            {
-    //                case 0:
-    //                    Gizmos.color = Color.black;
-    //                    break;
-    //                case 1:
-    //                    Gizmos.color = Color.white;
-    //                    break;
-    //                case 2:
-    //                    Gizmos.color = Color.grey;
-    //                    break;
-    //            }
-    //            Vector3 pos = new Vector3(-width / 2 + x + .5f, 0, -height / 2 + y + .5f);
-    //            Gizmos.DrawCube(pos, Vector3.one);
-    //        }
-    //    }
-    //}
-    //void DrawGradient()
-    //{
-    //    for (int x = 0; x < width; x++)
-    //    {
-    //        for (int y = 0; y < height; y++)
-    //        {
-    //            float cv = gradient.Value[x,y];
-
-    //            Gizmos.color = new Color(cv, cv, cv, 1f);
-    //            Vector3 pos = new Vector3(-width / 2 + x + .5f, 0, -height / 2 + y + .5f);
-    //            Gizmos.DrawCube(pos, Vector3.one);
-    //        }
-    //    }
-    //}
 
 }

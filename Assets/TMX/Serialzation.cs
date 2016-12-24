@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.IO;
-using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 public static class Serialization<T> where T : class
 {
@@ -10,14 +9,15 @@ public static class Serialization<T> where T : class
     {
         if (!File.Exists(fileName))
         {
+            Debug.Log(string.Format("No file in this directory named {0}", fileName));
             return null;
         }
 
-        DataContractSerializer deserializer = new DataContractSerializer(typeof(T));
+        XmlSerializer Serializer = new XmlSerializer(typeof(T));
 
         using (Stream stream = File.OpenRead(fileName))
         {
-            return (T)deserializer.ReadObject(stream);
+            return (T)Serializer.Deserialize(stream);
         }
     }
 }

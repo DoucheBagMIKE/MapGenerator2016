@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using ClipperLib;
 using System.Collections.Generic;
 
 public class Utility {
-    public static MapPos[] dirs = new MapPos[4] { new MapPos(-1, 0), new MapPos(0, 1), new MapPos(1, 0), new MapPos(0, -1) };
-    static Queue<MapPos> fringe = new Queue<MapPos>();
+    public static IntPoint[] dirs = new IntPoint[4] { new IntPoint(-1, 0), new IntPoint(0, 1), new IntPoint(1, 0), new IntPoint(0, -1) };
+    static Queue<IntPoint> fringe = new Queue<IntPoint>();
 
     //   Flood-fill(node, target-color, replacement-color):
     // 1. If target-color is equal to replacement-color, return.
@@ -29,26 +30,26 @@ public class Utility {
         if (Map[sx, sy] != targetColor)
             return ret;
         
-        fringe.Enqueue(new MapPos(sx, sy));
+        fringe.Enqueue(new IntPoint(sx, sy));
 
         while (fringe.Count != 0)
         {
-            MapPos n = fringe.Dequeue();
-            if (Map[n.x, n.y] == targetColor)
+            IntPoint n = fringe.Dequeue();
+            if (Map[n.X, n.Y] == targetColor)
             {
-                ret[n.x, n.y] = replaceColor;
-                Map[n.x, n.y] = -1;
-                foreach (MapPos dir in dirs)
+                ret[n.X, n.Y] = replaceColor;
+                Map[n.X, n.Y] = -1;
+                foreach (IntPoint dir in dirs)
                 {
-                    int nx = n.x + dir.x;
-                    int ny = n.y + dir.y;
+                    long nx = n.X + dir.X;
+                    long ny = n.Y + dir.Y;
                     if (nx < 0 || ny < 0 || nx > Map.GetLength(0) - 1 || ny > Map.GetLength(1) - 1)
                     {
                         continue;
                     }
                     if (Map[nx, ny] == targetColor)
                     {
-                        fringe.Enqueue(new MapPos(nx, ny));
+                        fringe.Enqueue(new IntPoint(nx, ny));
                     }
                 }
             }

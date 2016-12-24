@@ -63,12 +63,6 @@ public class LayoutGenerator : MonoBehaviour {
 
     public QuadTree<Circle> qTree;
 
-    public int CreateZone(Vector2 cPos, float radius)
-    {
-        int nID = Connections.createNode();
-        Zones.Add(nID, new Circle(cPos, radius));
-        return nID;
-    }
 	// Use this for initialization
 	void Awake () {
         rng = MapGenerator.instance.Rng;
@@ -230,19 +224,7 @@ public class LayoutGenerator : MonoBehaviour {
 
     void DrawDebug()
     {
-        List<Circle> Res = new List<Circle>();
-        Dictionary<int, GameObject> c_Objs = new Dictionary<int, GameObject>();
-        foreach (int key in Zones.Keys)
-        {
-            Circle c = Zones[key];
-            GameObject obj = new GameObject();//Instantiate(Resources.Load("Circle", typeof(GameObject))) as GameObject;
-            obj.transform.localScale = new Vector3(c.radius * 2, c.radius * 2, 1f);
-            obj.transform.position = new Vector3(c.centerPos.x, c.centerPos.y, 0);
-            //obj.GetComponent<Renderer>().sortingOrder = 0;
-
-            c_Objs.Add(key, obj);
-        }
-        List<LineRenderer> lines = new List<LineRenderer>();
+        GameObject go = new GameObject("Lines");
         List<int> visited = new List<int>();
         Queue<int> f = new Queue<int>();
         f.Enqueue(1);
@@ -255,9 +237,9 @@ public class LayoutGenerator : MonoBehaviour {
                 {
                     continue;
                 }
-                GameObject lObj = new GameObject();
+                GameObject lObj = new GameObject("LineObj");
                 LineRenderer lRend = lObj.AddComponent<LineRenderer>();
-                lObj.transform.parent = c_Objs[cid].transform;
+                lObj.transform.parent = go.transform;
 
                 lRend.SetPositions(new Vector3[2] { Zones[id].centerPos, Zones[cid].centerPos });
                 lRend.material = Resources.Load<Material>("DefaultMat");

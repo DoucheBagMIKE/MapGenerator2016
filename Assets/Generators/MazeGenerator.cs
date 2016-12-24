@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using ClipperLib;
 using System.Collections.Generic;
 
 public class MazeGenerator : MonoBehaviour
@@ -9,7 +10,7 @@ public class MazeGenerator : MonoBehaviour
     System.Random Rng;
 
     public bool[,] Visited;
-    List<MapPos> Fringe;
+    List<IntPoint> Fringe;
 
     [Range(0f,1f)]
     public float loopPercent;
@@ -21,7 +22,7 @@ public class MazeGenerator : MonoBehaviour
     {
         Rng = MapGenerator.instance.Rng;
         Visited = new bool[width, height];
-        Fringe = new List<MapPos>();
+        Fringe = new List<IntPoint>();
     }
 
     public void Generate(int sx, int sy, int[,] Map)
@@ -34,24 +35,24 @@ public class MazeGenerator : MonoBehaviour
             return;
         }
 
-        MapPos start = new MapPos(sx, sy);
+        IntPoint start = new IntPoint(sx, sy);
         
         Fringe.Add(start);
 
         while (Fringe.Count > 0)
         {
 
-            MapPos selected = pickNextFringe();
-            Map[selected.x, selected.y] = 1;
-            Visited[selected.x, selected.y] = true;
+            IntPoint selected = pickNextFringe();
+            Map[selected.X, selected.Y] = 1;
+            Visited[selected.X, selected.Y] = true;
 
-            List<MapPos> adjacent = FindFringeNeighbors(selected, 0, Map);
+            List<IntPoint> adjacent = FindFringeNeighbors(selected, 0, Map);
             if (adjacent.Count > 0)
             {
-                MapPos adjPos = adjacent[Rng.Next(0, adjacent.Count - 1)];
+                IntPoint adjPos = adjacent[Rng.Next(0, adjacent.Count - 1)];
                 if (Rng.NextDouble() >= loopPercent)
                 {
-                    Map[adjPos.x, adjPos.y] = 1;
+                    Map[adjPos.X, adjPos.Y] = 1;
                 }
                 setPassage(selected, adjPos, Map);
                 Fringe.Add(adjPos);
@@ -63,7 +64,7 @@ public class MazeGenerator : MonoBehaviour
         return;
     }
 
-    MapPos pickNextFringe()
+    IntPoint pickNextFringe()
     {
         if (Rng.NextDouble() < windyOrRandomPercent)
         {
@@ -78,14 +79,14 @@ public class MazeGenerator : MonoBehaviour
         //return Fringe[Fringe.Count - 1];
     }
 
-    public List<MapPos> FindFringeNeighbors(MapPos Pos, int TileState, int[,] Map)
+    public List<IntPoint> FindFringeNeighbors(IntPoint Pos, int TileState, int[,] Map)
     {
-        List<MapPos> ret = new List<MapPos>();
+        List<IntPoint> ret = new List<IntPoint>();
 
-        foreach (MapPos index in Utility.dirs)
+        foreach (IntPoint index in Utility.dirs)
         {
-            int x = Pos.x + (index.x * 2);
-            int y = Pos.y + (index.y * 2);
+            long x = Pos.X + (index.X * 2);
+            long y = Pos.Y + (index.Y * 2);
 
             
             if (x < 0 || x > width - 1 || y < 0 || y > height - 1)
@@ -100,16 +101,16 @@ public class MazeGenerator : MonoBehaviour
 
             if (Map[x, y] == TileState && Visited[x,y] == false)
             {
-                ret.Add(new MapPos(x, y));
+                ret.Add(new IntPoint(x, y));
             }
         }
         return ret;
     }
 
-    void setPassage(MapPos a, MapPos b, int[,] Map)
+    void setPassage(IntPoint a, IntPoint b, int[,] Map)
     {
-        int x = (a.x + b.x) / 2;
-        int y = (a.y + b.y) / 2;
+        long x = (a.X + b.X) / 2;
+        long y = (a.Y + b.Y) / 2;
 
         Map[x, y] = 1;
     }
@@ -139,10 +140,10 @@ public class MazeGenerator : MonoBehaviour
                 }
 
                 count = 0;
-                foreach (MapPos i in Utility.dirs)
+                foreach (IntPoint i in Utility.dirs)
                 {
-                    int nx = i.x + x;
-                    int ny = i.y + y;
+                    long nx = i.X + x;
+                    long ny = i.Y + y;
 
                     if (nx < 0 || nx > width - 1 || ny < 0 || ny > height - 1)
                     {

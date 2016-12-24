@@ -23,7 +23,7 @@ public class PolygonGenerator : MonoBehaviour {
 
 	int TileCount;
 
-	int[,] Tiles;
+	int[,] map;
     List<IntPoint> subj;
     List<List<IntPoint>> solution;
 
@@ -40,19 +40,13 @@ public class PolygonGenerator : MonoBehaviour {
         tUnitY = (float)TILESIZE / tex.height;//height of one tile in Texture Units.
 
         clipperObj = new Clipper();
-        //clipperObj.ReverseSolution = true;
-        //clipperObj.StrictlySimple = true;
-        subj = new List<IntPoint>();
         solution = new List<List<IntPoint>>();
-        //clipperObj.AddPath(subj, PolyType.ptSubject, true);
-
-        //Generate();
-	
 	}
 
     public void Generate ()
     {
-        Tiles = MapGenerator.instance.Map;
+        map = MapGenerator.instance.Map;
+
         BuildMesh();
         BuildColliders();
         RenderMesh();
@@ -100,10 +94,11 @@ public class PolygonGenerator : MonoBehaviour {
 	void BuildMesh(){
 
         List<List<IntPoint>> clip = new List<List<IntPoint>>();
-		for(int px=0;px<Tiles.GetLength(0);px++) {
-			for(int py=0;py<Tiles.GetLength(1);py++){
 
-                if (Tiles[px, py] == 0)
+		for(int px=0;px<map.GetLength(0);px++) {
+			for(int py=0;py<map.GetLength(1);py++){
+
+                if (map[px, py] == 0)
                 {
                     List<IntPoint> points = new List<IntPoint>();
                     points.Add(new IntPoint(px, py - 1));
@@ -117,7 +112,12 @@ public class PolygonGenerator : MonoBehaviour {
 
                 else
                 {
-                    GenTile(px, py, 9);
+                    GenTile(px, py, map[px,py]);
+
+                    List<IntPoint> points = MapGenerator.instance.Tmx.getTileColliderInfo(map[px, py] - 1); // the ids are zerobased in the xml.
+
+                    if (points.Count > 0)
+                        clipperObj.AddPath(points, PolyType.ptSubject, true);
                 }
 
             }
@@ -128,6 +128,7 @@ public class PolygonGenerator : MonoBehaviour {
 
     Vector2 TileMin (int id)
     {
+        id = id - 1;
         return new Vector2((id % tilesX) / (float)tilesX, (id / tilesX) / (float)tilesY);
     }
 
@@ -147,48 +148,5 @@ public class PolygonGenerator : MonoBehaviour {
 
             coll.SetPath(i, p.ToArray());
         }
-    }
-
-    void ClipperTest ()
-    {
-        List<List<IntPoint>> subj = new List<List<IntPoint>>(2);
-        subj.Add(new List<IntPoint>(4));
-        subj[0].Add(new IntPoint(180, 200));
-        subj[0].Add(new IntPoint(260, 200));
-        subj[0].Add(new IntPoint(260, 150));
-        subj[0].Add(new IntPoint(180, 150));
-
-        subj.Add(new List<IntPoint>(3));
-        subj[1].Add(new IntPoint(215, 160));
-        subj[1].Add(new IntPoint(230, 190));
-        subj[1].Add(new IntPoint(200, 190));
-
-        List<List<IntPoint>> clip = new List<List<IntPoint>>(1);
-        clip.Add(new List<IntPoint>(4));
-        clip[0].Add(new IntPoint(190, 210));
-        clip[0].Add(new IntPoint(240, 210));
-        clip[0].Add(new IntPoint(240, 130));
-        clip[0].Add(new IntPoint(190, 130));
-
-        List<List<IntPoint>> solution = new List<List<IntPoint>>();
-
-        Clipper c = new Clipper();
-        c.AddPaths(subj, PolyType.ptSubject, true);
-        c.AddPaths(clip, PolyType.ptClip, true);
-        c.Execute(ClipType.ctUnion, solution,
-          PolyFillType.pftEvenOdd, PolyFillType.pftEvenOdd);
-
-        foreach(List<IntPoint> poly in solution)
-        {
-            PolygonCollider2D coll = gameObject.AddComponent<PolygonCollider2D>();
-            List<Vector2> p = new List<Vector2>();
-
-            foreach(IntPoint vert in poly)
-            {
-                p.Add(new Vector2(vert.X, vert.Y));
-            }
-            coll.points = p.ToArray();
-        }
-
     }
 }
