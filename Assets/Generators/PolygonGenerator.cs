@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 using ClipperLib;
 
@@ -57,8 +56,8 @@ public class PolygonGenerator : MonoBehaviour {
 
         newVertices.Add(new Vector3(x, y, 0));
         newVertices.Add(new Vector3(x + 1, y, 0));
-        newVertices.Add(new Vector3(x + 1, y - 1, 0));
-        newVertices.Add(new Vector3(x, y - 1, 0));
+        newVertices.Add(new Vector3(x + 1, y + 1, 0));
+        newVertices.Add(new Vector3(x, y + 1, 0));
 
         newTriangles.Add(TileCount * 4);
         newTriangles.Add((TileCount * 4) + 1);
@@ -101,10 +100,10 @@ public class PolygonGenerator : MonoBehaviour {
                 if (map[px, py] == 0)
                 {
                     List<IntPoint> points = new List<IntPoint>();
-                    points.Add(new IntPoint(px, py - 1));
+                    points.Add(new IntPoint(px, py + 1));
                     points.Add(new IntPoint(px, py));
                     points.Add(new IntPoint(px + 1, py));
-                    points.Add(new IntPoint(px + 1, py - 1));
+                    points.Add(new IntPoint(px + 1, py + 1));
 
                     clipperObj.AddPath(points, PolyType.ptSubject, true);
 
@@ -114,10 +113,14 @@ public class PolygonGenerator : MonoBehaviour {
                 {
                     GenTile(px, py, map[px,py]);
 
-                    List<IntPoint> points = MapGenerator.instance.Tmx.getTileColliderInfo(map[px, py] - 1); // the ids are zerobased in the xml.
+                    List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[px, py] - 1);
+                    for(int i = 0; i < collInfo.Count; i++)
+                    {
+                        collInfo[i] = new IntPoint((collInfo[i].X / 16) + px, (collInfo[i].Y / 16) + (py));
+                    }
 
-                    if (points.Count > 0)
-                        clipperObj.AddPath(points, PolyType.ptSubject, true);
+                    if (collInfo.Count > 0)
+                        clipperObj.AddPath(collInfo, PolyType.ptSubject, true);
                 }
 
             }

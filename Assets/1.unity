@@ -109,6 +109,7 @@ GameObject:
   - 114: {fileID: 6612380}
   - 33: {fileID: 6612379}
   - 23: {fileID: 6612378}
+  - 114: {fileID: 6612390}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -129,8 +130,7 @@ MeshRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7dd95303063933a48adc39015196f85e, type: 2}
-  - {fileID: 2100000, guid: b80ef5ba74c880040999d052cf921471, type: 2}
+  - {fileID: 2100000, guid: e7cce4329510d31489fe77c5b02447eb, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_ProbeAnchor: {fileID: 0}
@@ -316,10 +316,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxConnectionsPerZone: 6
-  minZoneRadius: 5
-  maxZoneRadius: 13
+  minZoneRadius: 3
+  maxZoneRadius: 5
   MAXDISTFORCONNECTION: 2
   MINLENGTHOFLOOP: 5
+--- !u!114 &6612390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 6612377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 748c4cd2e31d77c469920a76974ca847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &616160751
 GameObject:
   m_ObjectHideFlags: 0

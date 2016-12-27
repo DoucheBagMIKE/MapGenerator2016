@@ -45,38 +45,46 @@ public class TmxFile
         int? tID = tileIdToTilesetId(id);
         if(tID != null)
         {
-            for (int i = 0; i < tileset[(int)tID].tile.Length; i++)
+            if (tileset[(int)tID].tile == null)// if the tileset has no collision data then we just return.
+            {
+                return ret;
+            }
+
+            for (int i = 0; i < tileset[(int)tID].tile.Length; i++)// theres probaly a better way to get the tile thamn a for loop.
             {
                 tile tile = tileset[(int)tID].tile[i];
                 if (tile.id != id)
                 {
                     continue;
                 }
-                else
+
+                if (tile.objectgroup.obj == null)
                 {
-                    foreach (tmxobject obj in tile.objectgroup.obj)
+                    break;
+                }
+
+                foreach (tmxobject obj in tile.objectgroup.obj)
+                {
+                    if (obj.polygon != null) // if this tile has a polygon we use that as for the tile.
                     {
-                        if (obj.polygon != null) // if this tile has a polygon we use that as for the tile.
+                        string[] s = obj.polygon.points.Split(' ');
+                        for (int index = s.Length - 1; index >= 0; index--)
                         {
-                            string[] s;
-                            foreach(string pos in obj.polygon.points.Split(' '))
-                            {
-                                s = pos.Split(',');
-                                ret.Add(new IntPoint(obj.x + int.Parse(s[0]), obj.y + int.Parse(s[1])));
-                                
-                            }
-                            break;// olny looks at the first obj in the collinders.
-                        }
-                        else // if theres no polygon data then it must be a rectangle so we use the position and the width and height to get our four points.
-                        {
-                            ret.Add(new IntPoint(obj.x, obj.y + (int)obj.height));
-                            ret.Add(new IntPoint(obj.x + (int)obj.width, obj.y + (int)obj.height));
-                            ret.Add(new IntPoint(obj.x + (int)obj.width, obj.y));
-                            ret.Add(new IntPoint(obj.x, obj.y));
-                            break;
+                            string[] pos = s[index].Split(',');
+                            //Debug.Log(string.Format("{0},{1}", pos[0], pos[1]));
+                            ret.Add(new IntPoint(obj.x + int.Parse(pos[0]), obj.y + (16 - int.Parse(pos[1]))));
                         }
                     }
+                    else // if theres no polygon data then it must be a rectangle so we use the position and the width and height to get our four points.
+                    {
+                        ret.Add(new IntPoint(obj.x, obj.y + (int)obj.height));
+                        ret.Add(new IntPoint(obj.x + (int)obj.width, obj.y + (int)obj.height));
+                        ret.Add(new IntPoint(obj.x + (int)obj.width, obj.y));
+                        ret.Add(new IntPoint(obj.x, obj.y));
+
+                    }
                 }
+                break;
             }
         }
 

@@ -6,7 +6,7 @@ public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator instance;
 
-    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, MazeTest, AbstractLayoutTest};
+    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, MazeTest, AbstractLayoutTest, Test};
 
     public GenerateType GenType;
     public string seed;
@@ -64,15 +64,15 @@ public class MapGenerator : MonoBehaviour {
 
     void Start ()
     {
-        Tmx = Serialization<TmxFile>.DeserializeFromXmlFile("test.tmx");
-        if (Tmx != null)
-        {
-            print(Tmx.tileset[0].tile[0].objectgroup.obj[0].polygon.points);// lol wtf tiled..
-        }
-        foreach(IntPoint p in Tmx.getTileColliderInfo(0))
-        {
-            print(string.Format("{0},{1}", p.X, p.Y));
-        }
+        Tmx = Serialization<TmxFile>.DeserializeFromXmlFile("Test.tmx");
+        //if (Tmx != null)
+        //{
+        //    print(Tmx.tileset[0].tile[0].objectgroup.obj[0].polygon.points);// lol wtf tiled..
+        //}
+        //foreach(IntPoint p in Tmx.getTileColliderInfo(0))
+        //{
+        //    print(string.Format("{0},{1}", p.X, p.Y));
+        //}
 
         Generate();
     }
@@ -124,8 +124,25 @@ public class MapGenerator : MonoBehaviour {
                 layoutGen.Generate();
                 layoutGen.TestMap();
                 break;
+            case GenerateType.Test:
+                Map = new int[5, 5]
+                {
+                    {1,1,1,1,1},
+                    {1,0,0,0,1},
+                    {1,0,1,0,1},
+                    {1,0,0,0,1},
+                    {1,1,1,1,1}
+                };
+                width = 5;
+                height = 5;
+                MapChunk.chunkSize = 5;
+                MapChunk testChunk = new MapChunk(0, 0);
+                GameObject go = new GameObject("MapChunk");
+                testChunk.gameobject = go;
+                //PolyGen.Generate(testChunk);
+                break;
         }
-        polyGen.Generate();
+        //polyGen.Generate();
     }
 
     void GenMazeStructure()
