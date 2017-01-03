@@ -127,19 +127,17 @@ public class MapGenerator : MonoBehaviour {
             case GenerateType.Test:
                 Map = new int[5, 5]
                 {
-                    {1,1,1,1,1},
-                    {1,0,0,0,1},
-                    {1,0,1,0,1},
-                    {1,0,0,0,1},
-                    {1,1,1,1,1}
+                    {33,34,35,36,37},
+                    {38,39,40,41,42},
+                    {43,44,45,46,47},
+                    {48,49,50,51,52},
+                    {53,54,55,56,57}
                 };
                 width = 5;
                 height = 5;
                 MapChunk.chunkSize = 5;
                 MapChunk testChunk = new MapChunk(0, 0);
-                GameObject go = new GameObject("MapChunk");
-                testChunk.gameobject = go;
-                //PolyGen.Generate(testChunk);
+                PolyGen.Generate(testChunk);
                 break;
         }
         //polyGen.Generate();

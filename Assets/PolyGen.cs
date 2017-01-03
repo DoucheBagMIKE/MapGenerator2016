@@ -4,20 +4,8 @@ using ClipperLib;
 
 public static class PolyGen
 {
-    public static Dictionary<int, List<Vector3>> newVertices = new Dictionary<int, List<Vector3>>();
-    public static Dictionary<int, List<int>> newTriangles = new Dictionary<int, List<int>>();
-    public static Dictionary<int, List<Vector2>> newUV = new Dictionary<int, List<Vector2>>();
-    static Dictionary<int, int> TileCount = new Dictionary<int, int>();
 
     static Clipper clipperObj = new Clipper();
-
-    const int TILESIZE = 16;
-    static int  tilesX;
-    static int tilesY;
-    static float tUnitX;
-    static float tUnitY;
-
-    static Mesh mesh;
 
     static int[,] map;
 
@@ -25,43 +13,31 @@ public static class PolyGen
 
     public static void Generate(MapChunk chunk)
     {
+        TmxFile Tmx = MapGenerator.instance.Tmx;
         map = MapGenerator.instance.Map;
+        string curSubLayerName;
 
-        for (long px = chunk.pos.X; px < chunk.pos.X + MapChunk.chunkSize; px++)
+        for (int px = (int)chunk.pos.X; px < chunk.pos.X + MapChunk.chunkSize; px++)
         {
-            for (long py = chunk.pos.Y; px < chunk.pos.Y + MapChunk.chunkSize; py++)
-            {
-                if(px >= map.GetLength(0) || py >= map.GetLength(1))
-                {
-                    continue;
-                }
+            if (px >= map.GetLength(0))
+                continue;
 
-                int? tID = MapGenerator.instance.Tmx.tileIdToTilesetId(map[px, py]);
-                
+            for (int py = (int)chunk.pos.Y; py < chunk.pos.Y + MapChunk.chunkSize; py++)
+            {
+                if (py >= map.GetLength(1))
+                    continue;
+
+                int? tID = Tmx.tileIdToTilesetId(map[px, py]);
+
                 if (tID == null)
                 {
                     Debug.Log("Tile ID doesnt belong to any tileset.");
                     return;
                 }
 
-                if (!TileCount.ContainsKey((int)tID))
-                {
-                    TileCount.Add((int)tID, 0);
-                    newVertices.Add((int)tID, new List<Vector3>());
-                    newTriangles.Add((int)tID, new List<int>());
-                    newUV.Add((int)tID, new List<Vector2>());
-                }
+                curSubLayerName = Tmx.tileset[(int)tID].name;
 
-
-                mesh = chunk.getMesh((int)tID);
-                Texture tex = chunk.getRenderer((int)tID).material.GetTexture("_MainTex");
-
-                tilesX = tex.width / TILESIZE;//width in tiles.
-                tilesY = tex.height / TILESIZE;// height in tiles.
-
-                tUnitX = (float)TILESIZE / tex.width;//width of one tile in Texture Units.
-                tUnitY = (float)TILESIZE / tex.height;//height of one tile in Texture Units.
-
+                SubLayer subLayer = chunk.layers["Test"].getSubLayer(curSubLayerName);
 
                 if (map[px, py] == 0)
                 {
@@ -77,7 +53,7 @@ public static class PolyGen
 
                 else
                 {
-                    GenTile(px, py, map[px, py]);
+                    GenTile(px, py, map[px, py], subLayer);
 
                     List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[px, py] - 1);
                     for (int i = 0; i < collInfo.Count; i++)
@@ -86,15 +62,17 @@ public static class PolyGen
                     }
 
                     if (collInfo.Count > 2)
+                    {
                         clipperObj.AddPath(collInfo, PolyType.ptSubject, true);
+                    }
+
                 }
             }
         }
 
         clipperObj.Execute(ClipType.ctUnion, solution);
 
-        PolygonCollider2D coll = chunk.getCollider();
-        coll.pathCount = solution.Count;
+        chunk.collider.pathCount = solution.Count;
 
         for (int i = 0; i < solution.Count; i++)
         {
@@ -105,58 +83,69 @@ public static class PolyGen
                 p.Add(new Vector2(vert.X, vert.Y));
             }
 
-            coll.SetPath(i, p.ToArray());
+            chunk.collider.SetPath(i, p.ToArray());
         }
 
-        foreach(int ID in chunk.getIDs())
+        foreach (string name in chunk.layers["Test"].subLayerNames())
         {
-            mesh = chunk.getMesh(ID);
+            SubLayer sub = chunk.layers["Test"].getSubLayer(name);
 
-            mesh.Clear();
-            mesh.vertices = newVertices[ID].ToArray();
-            mesh.triangles = newTriangles[ID].ToArray();
-            mesh.uv = newUV[ID].ToArray();
-            mesh.Optimize();
-            mesh.RecalculateNormals();
+            sub.mesh.Clear();
+            sub.mesh.vertices = sub.newVertices.ToArray();
+            sub.mesh.triangles = sub.newTriangles.ToArray();
+            sub.mesh.uv = sub.newUV.ToArray();
+            sub.mesh.Optimize();
+            sub.mesh.RecalculateNormals();
+
+            sub.newVertices.Clear();
+            sub.newTriangles.Clear();
+            sub.newUV.Clear();
+            sub.TileCount = 0;
         }
-       
-        TileCount.Clear();
-        newVertices.Clear();
-        newTriangles.Clear();
-        newUV.Clear();
 
         solution.Clear();
+        clipperObj.Clear();
     }
 
-    static void GenTile(long x, long y, int ID)
+    static void GenTile(long x, long y, int ID, SubLayer sub)
     {
         int tID = (int)MapGenerator.instance.Tmx.tileIdToTilesetId(ID);
+        
+        sub.newVertices.Add(new Vector3(x, y, 0));
+        sub.newVertices.Add(new Vector3(x + 1, y, 0));
+        sub.newVertices.Add(new Vector3(x + 1, y + 1, 0));
+        sub.newVertices.Add(new Vector3(x, y + 1, 0));
 
+        sub.newTriangles.Add(sub.TileCount * 4);
+        sub.newTriangles.Add((sub.TileCount * 4) + 1);
+        sub.newTriangles.Add((sub.TileCount * 4) + 3);
+        sub.newTriangles.Add((sub.TileCount * 4) + 1);
+        sub.newTriangles.Add((sub.TileCount * 4) + 2);
+        sub.newTriangles.Add((sub.TileCount * 4) + 3);
 
-        newVertices[tID].Add(new Vector3(x, y, 0));
-        newVertices[tID].Add(new Vector3(x + 1, y, 0));
-        newVertices[tID].Add(new Vector3(x + 1, y + 1, 0));
-        newVertices[tID].Add(new Vector3(x, y + 1, 0));
+        Vector2 vMin = TileMin(ID, sub);
+        sub.newUV.Add(new Vector2(vMin.x, vMin.y + sub.texUnitY));
+        sub.newUV.Add(new Vector2(vMin.x + sub.texUnitX, vMin.y + sub.texUnitY));
+        sub.newUV.Add(new Vector2(vMin.x + sub.texUnitX, vMin.y));
+        sub.newUV.Add(new Vector2(vMin.x, vMin.y));
 
-        newTriangles[tID].Add(TileCount[tID] * 4);
-        newTriangles[tID].Add((TileCount[tID] * 4) + 1);
-        newTriangles[tID].Add((TileCount[tID] * 4) + 3);
-        newTriangles[tID].Add((TileCount[tID] * 4) + 1);
-        newTriangles[tID].Add((TileCount[tID] * 4) + 2);
-        newTriangles[tID].Add((TileCount[tID] * 4) + 3);
+        sub.TileCount++;
 
-        Vector2 vMin = TileMin(ID);
+        TmxFile tmx = MapGenerator.instance.Tmx;
+        int firstGID = tmx.tileset[(int)tmx.tileIdToTilesetId(ID)].firstgid;
+        int lID = ID - firstGID;
 
-        newUV[tID].Add(new Vector2(vMin.x, vMin.y + tUnitY));
-        newUV[tID].Add(new Vector2(vMin.x + tUnitX, vMin.y + tUnitY));
-        newUV[tID].Add(new Vector2(vMin.x + tUnitX, vMin.y));
-        newUV[tID].Add(new Vector2(vMin.x, vMin.y));
-
-        TileCount[tID]++;
+        Debug.Log(string.Format("GID : {0}  TID : {1}", ID, tID));
+        Debug.Log(string.Format("VMIN : {0},{1}", vMin.x, vMin.y));
+        Debug.Log(string.Format("LocalID : {0}", lID));
     }
-    static Vector2 TileMin(int id)
+
+    public static Vector2 TileMin(int id, SubLayer sub)// this doesnt work right i dont think. needs to take into account the other tilesets.
     {
-        id = id - 1;
-        return new Vector2((id % tilesX) / (float)tilesX, (id / tilesX) / (float)tilesY);
+        TmxFile tmx = MapGenerator.instance.Tmx;
+        int firstGID = tmx.tileset[(int)tmx.tileIdToTilesetId(id)].firstgid;
+        id = id - firstGID;s
+        return new Vector2((id % sub.tWidth) / (float)sub.tWidth, (id / sub.tWidth) / (float)sub.tHeight);
     }
 }
+

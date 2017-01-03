@@ -23,7 +23,7 @@ public class TmxFile
     {
         for (int i = 0; i < tileset.Count; i++)
         {
-            if (id < tileset[i].tilecount + tileset[i].firstgid)
+            if (id <= tileset[i].tilecount + tileset[i].firstgid - 1)
                 return tileset[i].name;
         }
         return null;
@@ -33,8 +33,20 @@ public class TmxFile
     {
         for (int i = 0; i < tileset.Count; i++)
         {
-            if (id < tileset[i].tilecount + tileset[i].firstgid)
+            if (id <= tileset[i].tilecount + tileset[i].firstgid - 1)
                 return i;
+        }
+        return null;
+    }
+
+    public int? tilesetNametoID(string name)
+    {
+        for(int i = 0; i < tileset.Count; i++)
+        {
+            if (tileset[i].name == name)
+            {
+                return i;
+            }
         }
         return null;
     }
