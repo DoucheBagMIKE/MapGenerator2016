@@ -17,20 +17,20 @@ public class MapChunk
         pos = new IntPoint(x, y); // in chunk corrs.
         //gameobject.transform.position.Set(x * chunkSize, y * chunkSize, 0);
 
-        GameObject go = new GameObject("Collision");
-        collider = go.AddComponent<PolygonCollider2D>();
-        go.transform.parent = gameobject.transform;
+        //GameObject go = new GameObject("Collision");
+       //collider = go.AddComponent<PolygonCollider2D>();
+        //go.transform.parent = gameobject.transform;
 
         layers = new Dictionary<string, Layer>();
 
-        foreach(string layerName in MapData.BaseLayers) {
-            AddLayer(layerName);
+        foreach(LayerInfo layerInfo in MapData.BaseLayers) {
+            AddLayer(layerInfo.name, layerInfo.collisions, layerInfo.useEmptyTileRule);
         }
     }
 
-    public Layer AddLayer (string Name)
+    public Layer AddLayer (string Name, bool useCollision= false, bool useEmptyTileRule= false)
     {
-        Layer L = new Layer(gameobject, Name);
+        Layer L = new Layer(gameobject, Name, useCollision, useEmptyTileRule);
         layers.Add(Name, L);
         return L;
     }

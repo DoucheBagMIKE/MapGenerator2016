@@ -265,8 +265,8 @@ MonoBehaviour:
   GenType: 5
   seed: 
   randomSeed: 1
-  width: 256
-  height: 256
+  width: 128
+  height: 128
   ca_mask: 1
   mazeGen: {fileID: 0}
   rule45: {fileID: 0}

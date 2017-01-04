@@ -4,93 +4,122 @@ using ClipperLib;
 
 public static class PolyGen
 {
+    static Dictionary<string, Clipper> clippers = new Dictionary<string, Clipper>();
+    static Dictionary<string, List<List<IntPoint>>> solutions = new Dictionary<string, List<List<IntPoint>>>();
 
-    static Clipper clipperObj = new Clipper();
+    //static Clipper clipperObj = new Clipper();
 
     static int[,] map;
 
-    static List<List<IntPoint>> solution = new List<List<IntPoint>>();
+    //static List<List<IntPoint>> solution = new List<List<IntPoint>>();
 
     public static void Generate(MapChunk chunk)
     {
         TmxFile Tmx = MapGenerator.instance.Tmx;
-        map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
+        
         string curSubLayerName;
 
         int cx = (int)chunk.pos.X * MapChunk.chunkSize;
         int cy = (int)chunk.pos.Y * MapChunk.chunkSize;
+
         for (int py = cy; py < cy + MapChunk.chunkSize; py++)
         {
-            if (py >= map.GetLength(0))
+            if (py >= MapGenerator.instance.Map.height)
                 break;
 
             for (int px = cx; px < cx + MapChunk.chunkSize; px++)
             {
-                if (px >= map.GetLength(1))
+                if (px >= MapGenerator.instance.Map.width)
                     break;
 
-                int? tID = Tmx.tileIdToTilesetId(map[py, px]);
-
-                if (tID == null)
+                foreach(string layername in MapGenerator.instance.Map.layer.Keys)
                 {
-                    Debug.Log("Tile ID doesnt belong to any tileset.");
-                    return;
-                }
+                    map = MapGenerator.instance.Map.layer[layername];
+                    int? tID = Tmx.tileIdToTilesetId(map[py, px]);
 
-                curSubLayerName = Tmx.tileset[(int)tID].name;
-
-                SubLayer subLayer = chunk.layers[MapData.BaseLayers[0]].getSubLayer(curSubLayerName);
-
-                if (map[py, px] == 0)
-                {
-                    List<IntPoint> points = new List<IntPoint>();
-                    points.Add(new IntPoint(px, py + 1));
-                    points.Add(new IntPoint(px, py));
-                    points.Add(new IntPoint(px + 1, py));
-                    points.Add(new IntPoint(px + 1, py + 1));
-
-                    clipperObj.AddPath(points, PolyType.ptSubject, true);
-
-                }
-
-                else
-
-                {
-                    GenTile(px, py, map[py, px], subLayer);
-
-                    List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[py, px] - 1);
-                    for (int i = 0; i < collInfo.Count; i++)
+                    if (tID == null)
                     {
-                        collInfo[i] = new IntPoint((collInfo[i].X / 16) + px, (collInfo[i].Y / 16) + py);
+                        Debug.Log("Tile ID doesnt belong to any tileset.");
+                        return;
                     }
 
-                    if (collInfo.Count > 2)
+                    curSubLayerName = Tmx.tileset[(int)tID].name;
+
+                    SubLayer subLayer = chunk.layers[layername].getSubLayer(curSubLayerName);
+
+                    if (map[py, px] == 0)
                     {
-                        clipperObj.AddPath(collInfo, PolyType.ptSubject, true);
+                        if (chunk.layers[layername].Collisions && chunk.layers[layername].emptyTileCollisionRule)
+                        {
+                            if (!clippers.ContainsKey(layername))
+                            {
+                                clippers.Add(layername, new Clipper());
+                                solutions.Add(layername, new List<List<IntPoint>>());
+                            }
+
+                            List<IntPoint> points = new List<IntPoint>();
+                            points.Add(new IntPoint(px, py + 1));
+                            points.Add(new IntPoint(px, py));
+                            points.Add(new IntPoint(px + 1, py));
+                            points.Add(new IntPoint(px + 1, py + 1));
+
+                            clippers[layername].AddPath(points, PolyType.ptSubject, true);
+                            //clipperObj.AddPath(points, PolyType.ptSubject, true);
+                        }
                     }
 
+                    else
+
+                    {
+                        GenTile(px, py, map[py, px], subLayer);
+
+                        if (chunk.layers[layername].Collisions)
+                        {
+                            if (!clippers.ContainsKey(layername))
+                            {
+                                clippers.Add(layername, new Clipper());
+                                solutions.Add(layername, new List<List<IntPoint>>());
+                            }
+
+                            List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[py, px] - 1);
+                            for (int i = 0; i < collInfo.Count; i++)
+                            {
+                                collInfo[i] = new IntPoint((collInfo[i].X / 16) + px, (collInfo[i].Y / 16) + py);
+                            }
+
+                            if (collInfo.Count > 2)
+                            {
+                                clippers[layername].AddPath(collInfo, PolyType.ptSubject, true);
+                                //clipperObj.AddPath(collInfo, PolyType.ptSubject, true);
+                            }
+                        }
+                            
+                    }
                 }
+                
             }
         }
 
-
-        clipperObj.Execute(ClipType.ctUnion, solution);
-
-        chunk.collider.pathCount = solution.Count;
-
-        for (int i = 0; i < solution.Count; i++)
+        foreach (string layerName in clippers.Keys)
         {
-            List<Vector2> p = new List<Vector2>();
+            clippers[layerName].Execute(ClipType.ctUnion, solutions[layerName]);
 
-            foreach (IntPoint vert in solution[i])
+            chunk.layers[layerName].collider.pathCount = solutions[layerName].Count;
+
+            for (int i = 0; i < solutions[layerName].Count; i++)
             {
-                p.Add(new Vector2(vert.X, vert.Y));
-            }
+                List<Vector2> p = new List<Vector2>();
 
-            chunk.collider.SetPath(i, p.ToArray());
+                foreach (IntPoint vert in solutions[layerName][i])
+                {
+                    p.Add(new Vector2(vert.X, vert.Y));
+                }
+
+                chunk.layers[layerName].collider.SetPath(i, p.ToArray());
+            }
         }
 
-        foreach(string layerName in MapData.BaseLayers)
+        foreach (string layerName in chunk.layers.Keys)
         {
             foreach (string name in chunk.layers[layerName].subLayerNames())
             {
@@ -110,9 +139,49 @@ public static class PolyGen
             }
         }
 
-        solution.Clear();
-        clipperObj.Clear();
+        solutions.Clear();
+        clippers.Clear();
     }
+
+    //clipperObj.Execute(ClipType.ctUnion, solution);
+
+    //chunk.collider.pathCount = solution.Count;
+
+    //for (int i = 0; i < solution.Count; i++)
+    //{
+    //    List<Vector2> p = new List<Vector2>();
+
+    //    foreach (IntPoint vert in solution[i])
+    //    {
+    //        p.Add(new Vector2(vert.X, vert.Y));
+    //    }
+
+    //    chunk.collider.SetPath(i, p.ToArray());
+    //}
+
+    //    foreach(string layerName in MapData.BaseLayers)
+    //    {
+    //        foreach (string name in chunk.layers[layerName].subLayerNames())
+    //        {
+    //            SubLayer sub = chunk.layers[layerName].getSubLayer(name);
+
+    //            sub.mesh.Clear();
+    //            sub.mesh.vertices = sub.newVertices.ToArray();
+    //            sub.mesh.triangles = sub.newTriangles.ToArray();
+    //            sub.mesh.uv = sub.newUV.ToArray();
+    //            sub.mesh.Optimize();
+    //            sub.mesh.RecalculateNormals();
+
+    //            sub.newVertices.Clear();
+    //            sub.newTriangles.Clear();
+    //            sub.newUV.Clear();
+    //            sub.TileCount = 0;
+    //        }
+    //    }
+
+    //    solution.Clear();
+    //    clipperObj.Clear();
+    //}
 
     static void GenTile(long x, long y, int ID, SubLayer sub)
     {

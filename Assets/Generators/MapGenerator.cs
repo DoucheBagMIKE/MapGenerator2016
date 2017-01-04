@@ -121,10 +121,10 @@ public class MapGenerator : MonoBehaviour {
     void GenMazeStructure()
     {
         structGen.Generate();
-        mazeGen.Generate((width / 2) + 1, (height / 2) + 1, Map.layer[MapData.BaseLayers[0]]);
+        mazeGen.Generate((width / 2) + 1, (height / 2) + 1, Map.layer[MapData.BaseLayers[0].name]);
         for (int n = 0; n < RemoveDeadEndsIterations; n++)
         {
-            mazeGen.Sparsify(Map.layer[MapData.BaseLayers[0]]);
+            mazeGen.Sparsify(Map.layer[MapData.BaseLayers[0].name]);
         }
     }
 

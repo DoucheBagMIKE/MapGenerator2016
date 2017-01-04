@@ -31,7 +31,7 @@ public class StructureGenerator : MonoBehaviour
     {
         Rng = MapGenerator.instance.Rng;
         mazeGen = MapGenerator.instance.mazeGen;
-        Map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
+        Map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0].name];
 
         rColors = new List<Color32>();
         rooms = new List<List<MapPos>>();
@@ -73,7 +73,7 @@ public class StructureGenerator : MonoBehaviour
     public void Generate()
     {
         mazeGen = MapGenerator.instance.mazeGen;
-        Map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
+        Map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0].name];
 
         int roomIndex = 1;
 

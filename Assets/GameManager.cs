@@ -4,7 +4,7 @@ using System.Collections;
 public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
         ChunkManager.MapChunks = new GameObject("MapChunks");
 	}
 	

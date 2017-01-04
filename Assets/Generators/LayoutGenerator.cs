@@ -260,7 +260,7 @@ public class LayoutGenerator : MonoBehaviour {
         // draws the zones into the map array.
         foreach (Circle c in Zones.Values)
         {
-            int[,] map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
+            int[,] map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0].name];
             for(int y = (int)(c.centerPos.y - c.radius); y < c.centerPos.y + c.radius; y++)
             {
                 for(int x  = (int)(c.centerPos.x - c.radius); x < c.centerPos.x + c.radius; x++)

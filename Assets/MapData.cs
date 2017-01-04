@@ -1,10 +1,28 @@
 ﻿using System.Collections.Generic;
 
-public class MapData {
-    public static string[] BaseLayers = new string[2]
+public class LayerInfo
+{
+    public string name;
+    public bool collisions;
+    public bool useEmptyTileRule;
+
+    public LayerInfo (string Name, bool Collisions= false, bool UseEmptyTileRule= false)
     {
-        "Floor",
-        "Wall"
+        name = Name;
+        collisions = Collisions;
+        useEmptyTileRule = UseEmptyTileRule;
+    }
+}
+
+public class MapData {
+    //public static string[] BaseLayers = new string[1]
+    //{
+    //    "Floor"
+    //};
+    public static LayerInfo[] BaseLayers = new LayerInfo[2]
+    {
+        new LayerInfo("Floor", true, true),
+        new LayerInfo("Wall")
     };
 
     public int width;
@@ -16,9 +34,9 @@ public class MapData {
         width = Width;
         height = Height;
         layer = new Dictionary<string, int[,]>();
-        foreach(string layerName in BaseLayers)
+        foreach(LayerInfo layerInfo in BaseLayers)
         {
-            layer.Add(layerName, new int[height, width]);
+            layer.Add(layerInfo.name, new int[height, width]);
         }
 
     }
