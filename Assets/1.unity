@@ -262,7 +262,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f6878e83db14aa48961f51f068429ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GenType: 0
+  GenType: 5
   seed: 
   randomSeed: 1
   width: 256
