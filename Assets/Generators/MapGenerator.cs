@@ -6,7 +6,7 @@ public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator instance;
 
-    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, MazeTest, AbstractLayoutTest, Test};
+    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, AbstractLayoutTest};
 
     public GenerateType GenType;
     public string seed;
@@ -15,6 +15,8 @@ public class MapGenerator : MonoBehaviour {
     public int width;
     public int height;
     public System.Random Rng;
+
+    public MapData Map;
 
     public bool ca_mask;
     public int[,] mask;
@@ -31,7 +33,7 @@ public class MapGenerator : MonoBehaviour {
     PolygonGenerator polyGen;
     LayoutGenerator layoutGen;
 
-    public int[,] Map;
+    //public int[,] Map;
 
     public int RemoveDeadEndsIterations;
 
@@ -58,22 +60,14 @@ public class MapGenerator : MonoBehaviour {
 
         Rng = new System.Random(seed.GetHashCode());
 
-        Map = new int[width, height];
+        Map = new MapData(width, height);
+        //Map = new int[width, height];
 
     }
 
     void Start ()
     {
         Tmx = Serialization<TmxFile>.DeserializeFromXmlFile("Test.tmx");
-        //if (Tmx != null)
-        //{
-        //    print(Tmx.tileset[0].tile[0].objectgroup.obj[0].polygon.points);// lol wtf tiled..
-        //}
-        //foreach(IntPoint p in Tmx.getTileColliderInfo(0))
-        //{
-        //    print(string.Format("{0},{1}", p.X, p.Y));
-        //}
-
         Generate();
     }
 
@@ -87,7 +81,8 @@ public class MapGenerator : MonoBehaviour {
 
     void Generate ()
     {
-        Map = new int[width, height];
+        Map = new MapData(width, height);
+        //Map = new int[width, height];
         mazeGen.Visited = new bool[width, height];
         structGen.rooms.Clear();
 
@@ -102,54 +97,34 @@ public class MapGenerator : MonoBehaviour {
                 GenMazeStructure();
                 break;
             case GenerateType.CA_45Rule:
-                Map = rule45.Generate(width, height);
+                Map.layer["Floor"] = rule45.Generate(width, height);
                 break;
             case GenerateType.RandomWalk:
                 randomWalk.Generate();
-                Map = randomWalk.Map;
+                Map.layer["Floor"] = randomWalk.Map;
                 break;
             case GenerateType.PerlinWorm:
                 perlinWorm.Generate();
-                Map = perlinWorm.Map;
+                Map.layer["Floor"] = perlinWorm.Map;
                 break;
             case GenerateType.MaskTest:
-                Map = Utility.floodfill(width / 2, height / 2, rule45.Generate(width, height));
-                break;
-            case GenerateType.MazeTest:
-                int[,] test = new int[10, 10];
-                mazeGen.Generate(5, 5, test);
-                Map = test;
+                Map.layer["Floor"] = Utility.floodfill(width / 2, height / 2, rule45.Generate(width, height));
                 break;
             case GenerateType.AbstractLayoutTest:
                 layoutGen.Generate();
                 layoutGen.TestMap();
                 break;
-            case GenerateType.Test:
-                Map = new int[5, 5]
-                {
-                    {33,34,35,36,37},
-                    {38,39,40,41,42},
-                    {43,44,45,46,47},
-                    {48,49,50,51,52},
-                    {53,54,55,56,57}
-                };
-                width = 5;
-                height = 5;
-                MapChunk.chunkSize = 5;
-                MapChunk testChunk = new MapChunk(0, 0);
-                PolyGen.Generate(testChunk);
-                break;
         }
-        //polyGen.Generate();
+        ChunkManager.SpawnChunks();
     }
 
     void GenMazeStructure()
     {
         structGen.Generate();
-        mazeGen.Generate((width / 2) + 1, (height / 2) + 1, Map);
+        mazeGen.Generate((width / 2) + 1, (height / 2) + 1, Map.layer[MapData.BaseLayers[0]]);
         for (int n = 0; n < RemoveDeadEndsIterations; n++)
         {
-            mazeGen.Sparsify(Map);
+            mazeGen.Sparsify(Map.layer[MapData.BaseLayers[0]]);
         }
     }
 

@@ -14,20 +14,22 @@ public static class PolyGen
     public static void Generate(MapChunk chunk)
     {
         TmxFile Tmx = MapGenerator.instance.Tmx;
-        map = MapGenerator.instance.Map;
+        map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
         string curSubLayerName;
 
-        for (int px = (int)chunk.pos.X; px < chunk.pos.X + MapChunk.chunkSize; px++)
+        int cx = (int)chunk.pos.X * MapChunk.chunkSize;
+        int cy = (int)chunk.pos.Y * MapChunk.chunkSize;
+        for (int py = cy; py < cy + MapChunk.chunkSize; py++)
         {
-            if (px >= map.GetLength(0))
-                continue;
+            if (py >= map.GetLength(0))
+                break;
 
-            for (int py = (int)chunk.pos.Y; py < chunk.pos.Y + MapChunk.chunkSize; py++)
+            for (int px = cx; px < cx + MapChunk.chunkSize; px++)
             {
-                if (py >= map.GetLength(1))
-                    continue;
+                if (px >= map.GetLength(1))
+                    break;
 
-                int? tID = Tmx.tileIdToTilesetId(map[px, py]);
+                int? tID = Tmx.tileIdToTilesetId(map[py, px]);
 
                 if (tID == null)
                 {
@@ -37,9 +39,9 @@ public static class PolyGen
 
                 curSubLayerName = Tmx.tileset[(int)tID].name;
 
-                SubLayer subLayer = chunk.layers["Test"].getSubLayer(curSubLayerName);
+                SubLayer subLayer = chunk.layers[MapData.BaseLayers[0]].getSubLayer(curSubLayerName);
 
-                if (map[px, py] == 0)
+                if (map[py, px] == 0)
                 {
                     List<IntPoint> points = new List<IntPoint>();
                     points.Add(new IntPoint(px, py + 1));
@@ -52,10 +54,11 @@ public static class PolyGen
                 }
 
                 else
-                {
-                    GenTile(px, py, map[px, py], subLayer);
 
-                    List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[px, py] - 1);
+                {
+                    GenTile(px, py, map[py, px], subLayer);
+
+                    List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[py, px] - 1);
                     for (int i = 0; i < collInfo.Count; i++)
                     {
                         collInfo[i] = new IntPoint((collInfo[i].X / 16) + px, (collInfo[i].Y / 16) + py);
@@ -69,6 +72,7 @@ public static class PolyGen
                 }
             }
         }
+
 
         clipperObj.Execute(ClipType.ctUnion, solution);
 
@@ -86,21 +90,24 @@ public static class PolyGen
             chunk.collider.SetPath(i, p.ToArray());
         }
 
-        foreach (string name in chunk.layers["Test"].subLayerNames())
+        foreach(string layerName in MapData.BaseLayers)
         {
-            SubLayer sub = chunk.layers["Test"].getSubLayer(name);
+            foreach (string name in chunk.layers[layerName].subLayerNames())
+            {
+                SubLayer sub = chunk.layers[layerName].getSubLayer(name);
 
-            sub.mesh.Clear();
-            sub.mesh.vertices = sub.newVertices.ToArray();
-            sub.mesh.triangles = sub.newTriangles.ToArray();
-            sub.mesh.uv = sub.newUV.ToArray();
-            sub.mesh.Optimize();
-            sub.mesh.RecalculateNormals();
+                sub.mesh.Clear();
+                sub.mesh.vertices = sub.newVertices.ToArray();
+                sub.mesh.triangles = sub.newTriangles.ToArray();
+                sub.mesh.uv = sub.newUV.ToArray();
+                sub.mesh.Optimize();
+                sub.mesh.RecalculateNormals();
 
-            sub.newVertices.Clear();
-            sub.newTriangles.Clear();
-            sub.newUV.Clear();
-            sub.TileCount = 0;
+                sub.newVertices.Clear();
+                sub.newTriangles.Clear();
+                sub.newUV.Clear();
+                sub.TileCount = 0;
+            }
         }
 
         solution.Clear();
@@ -110,41 +117,37 @@ public static class PolyGen
     static void GenTile(long x, long y, int ID, SubLayer sub)
     {
         int tID = (int)MapGenerator.instance.Tmx.tileIdToTilesetId(ID);
-        
-        sub.newVertices.Add(new Vector3(x, y, 0));
-        sub.newVertices.Add(new Vector3(x + 1, y, 0));
-        sub.newVertices.Add(new Vector3(x + 1, y + 1, 0));
-        sub.newVertices.Add(new Vector3(x, y + 1, 0));
 
-        sub.newTriangles.Add(sub.TileCount * 4);
+        sub.newVertices.Add(new Vector3(x, y, 0));// (0,0) 0
+        sub.newVertices.Add(new Vector3(x, y + 1, 0));// (0,1) 1
+        sub.newVertices.Add(new Vector3(x + 1, y + 1, 0));// (1,1) 2
+        sub.newVertices.Add(new Vector3(x + 1, y, 0));// (1,0) 3
+
+        sub.newTriangles.Add((sub.TileCount * 4) + 0);
         sub.newTriangles.Add((sub.TileCount * 4) + 1);
-        sub.newTriangles.Add((sub.TileCount * 4) + 3);
-        sub.newTriangles.Add((sub.TileCount * 4) + 1);
+        sub.newTriangles.Add((sub.TileCount * 4) + 2);
+        sub.newTriangles.Add((sub.TileCount * 4) + 0);
         sub.newTriangles.Add((sub.TileCount * 4) + 2);
         sub.newTriangles.Add((sub.TileCount * 4) + 3);
 
         Vector2 vMin = TileMin(ID, sub);
+        sub.newUV.Add(new Vector2(vMin.x, vMin.y));
         sub.newUV.Add(new Vector2(vMin.x, vMin.y + sub.texUnitY));
         sub.newUV.Add(new Vector2(vMin.x + sub.texUnitX, vMin.y + sub.texUnitY));
         sub.newUV.Add(new Vector2(vMin.x + sub.texUnitX, vMin.y));
-        sub.newUV.Add(new Vector2(vMin.x, vMin.y));
 
         sub.TileCount++;
 
         TmxFile tmx = MapGenerator.instance.Tmx;
         int firstGID = tmx.tileset[(int)tmx.tileIdToTilesetId(ID)].firstgid;
         int lID = ID - firstGID;
-
-        Debug.Log(string.Format("GID : {0}  TID : {1}", ID, tID));
-        Debug.Log(string.Format("VMIN : {0},{1}", vMin.x, vMin.y));
-        Debug.Log(string.Format("LocalID : {0}", lID));
     }
 
-    public static Vector2 TileMin(int id, SubLayer sub)// this doesnt work right i dont think. needs to take into account the other tilesets.
+    public static Vector2 TileMin(int id, SubLayer sub)
     {
         TmxFile tmx = MapGenerator.instance.Tmx;
         int firstGID = tmx.tileset[(int)tmx.tileIdToTilesetId(id)].firstgid;
-        id = id - firstGID;s
+        id = id - firstGID;
         return new Vector2((id % sub.tWidth) / (float)sub.tWidth, (id / sub.tWidth) / (float)sub.tHeight);
     }
 }

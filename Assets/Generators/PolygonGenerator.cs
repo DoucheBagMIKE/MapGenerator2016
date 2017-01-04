@@ -44,7 +44,7 @@ public class PolygonGenerator : MonoBehaviour {
 
     public void Generate ()
     {
-        map = MapGenerator.instance.Map;
+        map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
 
         BuildMesh();
         BuildColliders();

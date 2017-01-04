@@ -3,7 +3,7 @@
  <tileset firstgid="1" name="Tile" tilewidth="16" tileheight="16" tilecount="32" columns="8">
   <image source="Assets/DawnLike/Objects/Tile.png" width="128" height="64"/>
  </tileset>
- <tileset firstgid="33" name="Trap0" tilewidth="16" tileheight="16" tilecount="40" columns="8">
-  <image source="Assets/DawnLike/Objects/Trap0.png" width="128" height="80"/>
+ <tileset firstgid="33" name="Trap0Test" tilewidth="16" tileheight="16" tilecount="32" columns="8">
+  <image source="Assets/DawnLike/Objects/Trap0Test.png" width="128" height="64"/>
  </tileset>
 </map>

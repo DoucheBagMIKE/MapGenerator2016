@@ -24,7 +24,7 @@ public class Rule45 : MonoBehaviour {
 
     void Start ()
     {
-        Map = MapGenerator.instance.Map;
+        Map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
         Rng = MapGenerator.instance.Rng;
         gradient = MapGenerator.instance.gradient;
     }

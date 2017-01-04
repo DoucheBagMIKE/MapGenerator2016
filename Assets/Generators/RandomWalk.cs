@@ -36,7 +36,7 @@ public class RandomWalk : MonoBehaviour {
 
     void Start ()
     {
-        Map = MapGenerator.instance.Map;
+        Map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0]];
         width = MapGenerator.instance.width;
         height = MapGenerator.instance.height;
         Rng = MapGenerator.instance.Rng;
