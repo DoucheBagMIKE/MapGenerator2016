@@ -15,6 +15,7 @@ public static class ChunkManager {
         MapChunk chunk = new MapChunk(x, y);
         chunks.Add(chunk.pos, chunk);
         chunk.gameobject.transform.parent = MapChunks.transform;
+        chunk.gameobject.transform.position = new Vector3(x * MapChunk.chunkSize, y * MapChunk.chunkSize, 0);
         return chunk;
     }
 

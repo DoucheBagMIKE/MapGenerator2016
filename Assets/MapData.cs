@@ -19,9 +19,10 @@ public class MapData {
     //{
     //    "Floor"
     //};
-    public static LayerInfo[] BaseLayers = new LayerInfo[2]
+    public static LayerInfo[] BaseLayers = new LayerInfo[3]
     {
         new LayerInfo("Floor", true, true),
+        new LayerInfo("Object"),
         new LayerInfo("Wall")
     };
 

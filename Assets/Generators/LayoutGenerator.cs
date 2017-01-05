@@ -260,7 +260,7 @@ public class LayoutGenerator : MonoBehaviour {
         // draws the zones into the map array.
         foreach (Circle c in Zones.Values)
         {
-            int[,] map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0].name];
+            //int[,] map = MapGenerator.instance.Map.layer[MapData.BaseLayers[0].name];
             for(int y = (int)(c.centerPos.y - c.radius); y < c.centerPos.y + c.radius; y++)
             {
                 for(int x  = (int)(c.centerPos.x - c.radius); x < c.centerPos.x + c.radius; x++)
@@ -268,7 +268,10 @@ public class LayoutGenerator : MonoBehaviour {
                     float dist = ((c.centerPos.x - x) * (c.centerPos.x - x) + (c.centerPos.y - y) * (c.centerPos.y - y));
                     if (dist < (c.radius) * (c.radius))
                     {
-                        map[y, x] = 1;
+                        MapGenerator.instance.Map.layer["Floor"][y, x] = 1;
+                    } else
+                    {
+                        //MapGenerator.instance.Map.layer["Wall"][y, x] = 64;
                     }
                 }
             }

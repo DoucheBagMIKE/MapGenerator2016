@@ -15,7 +15,7 @@ public class MapChunk
     public MapChunk(int x, int y) { 
         gameobject = new GameObject(string.Format("{0},{1}", x, y));
         pos = new IntPoint(x, y); // in chunk corrs.
-        //gameobject.transform.position.Set(x * chunkSize, y * chunkSize, 0);
+        gameobject.transform.position.Set(x * chunkSize, y * chunkSize, 0);
 
         //GameObject go = new GameObject("Collision");
        //collider = go.AddComponent<PolygonCollider2D>();

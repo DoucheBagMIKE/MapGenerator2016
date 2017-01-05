@@ -45,7 +45,12 @@ public static class PolyGen
 
                     curSubLayerName = Tmx.tileset[(int)tID].name;
 
-                    SubLayer subLayer = chunk.layers[layername].getSubLayer(curSubLayerName);
+                    SubLayer subLayer = null;
+
+                    if(map[py, px] != 0)
+                    {
+                        subLayer = chunk.layers[layername].getSubLayer(curSubLayerName);
+                    }
 
                     if (map[py, px] == 0)
                     {
@@ -56,12 +61,13 @@ public static class PolyGen
                                 clippers.Add(layername, new Clipper());
                                 solutions.Add(layername, new List<List<IntPoint>>());
                             }
-
+                            int x = px;// MapChunk.chunkSize;
+                            int y = py;// MapChunk.chunkSize;
                             List<IntPoint> points = new List<IntPoint>();
-                            points.Add(new IntPoint(px, py + 1));
-                            points.Add(new IntPoint(px, py));
-                            points.Add(new IntPoint(px + 1, py));
-                            points.Add(new IntPoint(px + 1, py + 1));
+                            points.Add(new IntPoint(x, y + 1));
+                            points.Add(new IntPoint(x, y));
+                            points.Add(new IntPoint(x + 1, y));
+                            points.Add(new IntPoint(x + 1, y + 1));
 
                             clippers[layername].AddPath(points, PolyType.ptSubject, true);
                             //clipperObj.AddPath(points, PolyType.ptSubject, true);
@@ -71,7 +77,11 @@ public static class PolyGen
                     else
 
                     {
-                        GenTile(px, py, map[py, px], subLayer);
+                        if(subLayer != null)
+                        {
+                            GenTile(px, py, map[py, px], subLayer);
+                        }
+                        
 
                         if (chunk.layers[layername].Collisions)
                         {
@@ -112,7 +122,7 @@ public static class PolyGen
 
                 foreach (IntPoint vert in solutions[layerName][i])
                 {
-                    p.Add(new Vector2(vert.X, vert.Y));
+                    p.Add(new Vector2(vert.X - chunk.gameobject.transform.position.x, vert.Y - chunk.gameobject.transform.position.y));
                 }
 
                 chunk.layers[layerName].collider.SetPath(i, p.ToArray());

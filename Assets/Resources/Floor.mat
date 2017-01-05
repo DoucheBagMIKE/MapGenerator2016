@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: Floor
-  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_Shader: {fileID: 10800, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: PIXELSNAP_ON
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -24,6 +24,21 @@ Material:
     m_Floats:
     - first:
         name: PixelSnap
+      second: 1
+    - first:
+        name: _Offset
+      second: 0
+    - first:
+        name: _UVXOffset
+      second: 0
+    - first:
+        name: _UVXScale
+      second: 1
+    - first:
+        name: _UVYOffset
+      second: 0
+    - first:
+        name: _UVYScale
       second: 1
     m_Colors:
     - first:
