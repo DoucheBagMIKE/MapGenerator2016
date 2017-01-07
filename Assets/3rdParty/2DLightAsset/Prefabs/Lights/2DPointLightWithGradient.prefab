@@ -70,11 +70,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5998bbe8bae5cd41a7f932e85254aa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isDirty: 1
+  isStatic: 1
   version: 312e302e32
-  lightMaterial: {fileID: 2100000, guid: b0a95a22e23b6a54092969a96defeaf8, type: 2}
+  lightMaterial: {fileID: 2100000, guid: 86cc24da8c1c7dc4c921eb505d9a3c7b, type: 2}
   allMeshes: []
-  lightRadius: 40
+  lightRadius: 10
   lightSegments: 8
+  layer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!212 &21266342
 SpriteRenderer:
   m_ObjectHideFlags: 1

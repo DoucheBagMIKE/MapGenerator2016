@@ -1,30 +1,6 @@
-﻿/****************************************************************************
- Copyright (c) 2014 Martin Ysa
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;		// This allows for the use of lists, like <GameObject>
-//using pseudoSinCos;
-
+using System.Collections.Generic;
 
 public class verts
 {
@@ -35,13 +11,14 @@ public class verts
 
 }
 
-
 public class DynamicLight : MonoBehaviour {
 
+    // Public variables
 
+    public bool isDirty = true;
+    public bool isStatic = true;
 
-	// Public variables
-
+    [HideInInspector]
 	public string version = "1.0.4"; //release date 31/01/2016
 
 	public Material lightMaterial;
@@ -62,7 +39,6 @@ public class DynamicLight : MonoBehaviour {
 	
 	// Private variables
 	Mesh lightMesh;													// Mesh for our light mesh
-
 
 	// Called at beginning of script execution
 	void Start () {
@@ -87,21 +63,38 @@ public class DynamicLight : MonoBehaviour {
 
 
 	}
+
+    void FixedUpdate()
+    {
+        if(!isStatic)
+        {
+            isDirty = true;
+        }
+    }
 	
+	void LateUpdate(){
+        if (!isDirty)
+            return;
+        // if light is within the cameraView  DO: Update
+        var vertExtent = Camera.main.orthographicSize;
+        var horzExtent = vertExtent * Screen.width / Screen.height;
+        Vector3 cPos = Camera.main.transform.position;
 
-	void Update(){
-
-		getAllMeshes();
-		setLight ();
-		renderLightMesh ();
-		resetBounds ();
-
+        if (Utility.Intersects(new Rect(cPos.x, cPos.y, horzExtent, vertExtent), new Circle(gameObject.transform.position, lightRadius).Rect))
+        {
+            isDirty = false;
+            getAllMeshes();
+            setLight();
+            renderLightMesh();
+            resetBounds();
+        }
+        
 	}
 
 	void getAllMeshes(){
 		//allMeshes = FindObjectsOfType(typeof(PolygonCollider2D)) as PolygonCollider2D[];
 
-
+        //could use a quad tree here... -mike
 		Collider2D [] allColl2D = Physics2D.OverlapCircleAll(transform.position, lightRadius, layer);
 		allMeshes = new PolygonCollider2D[allColl2D.Length];
 

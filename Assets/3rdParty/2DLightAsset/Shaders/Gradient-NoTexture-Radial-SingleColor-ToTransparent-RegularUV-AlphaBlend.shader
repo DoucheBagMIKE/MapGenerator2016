@@ -34,6 +34,7 @@ Shader "Gradient/No Texture/Radial/Single-Color/To Transparent/Regular UV/Alpha 
 								//Blend DstColor Zero                 = Multiplicative
 								//Blend DstColor SrcColor             = 2x Multiplicative
 
+		
 			CGPROGRAM						//Start a program in the CG language
 			#pragma target 2.0				//Run this shader on at least Shader Model 2.0 hardware (e.g. Direct3D 9)
 			#pragma fragment frag			//The fragment shader is named 'frag'
