@@ -104,7 +104,7 @@ public class StructureGenerator : MonoBehaviour
                     {
                         Map[xPos, yPos] = 1;
                     }
-                    mazeGen.Visited[xPos, yPos] = true;
+                    //mazeGen.Visited[xPos, yPos] = true;
                 }
             }
             roomIndex++;
@@ -183,7 +183,7 @@ public class StructureGenerator : MonoBehaviour
             ny = adjRooms[i].y;
             Map[nx, ny] = 1;
             lables[nx, ny] = 0;
-            mazeGen.Visited[nx, ny] = false;
+            //  mazeGen.Visited[nx, ny] = false;
         }
     }
 

@@ -58,8 +58,6 @@ public class SubLayer {
         texUnitX = (float)TILESIZE / t.image.width;
         texUnitY = (float)TILESIZE / t.image.height;
 
-        Debug.Log(string.Format("Name : {0} {1},{2} {3},{4}", MaterialName, tWidth, tHeight, texUnitX, texUnitY));
-
         newVertices = new List<Vector3>();
         newTriangles = new List<int>();
         newUV = new List<Vector2>();

@@ -5,12 +5,7 @@ using System.Collections.Generic;
 public class MazeGenerator : MonoBehaviour
 {
     // Blockwise growing tree algorithom.
-    int width;
-    int height;
-    System.Random Rng;
-
-    public bool[,] Visited;
-    List<IntPoint> Fringe;
+    MazeGen _MazeGen;
 
     [Range(0f,1f)]
     public float loopPercent;
@@ -20,6 +15,34 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        _MazeGen = new MazeGen(MapGenerator.instance.Map.width, MapGenerator.instance.Map.height);
+        _MazeGen.loopPercent = loopPercent;
+        _MazeGen.windyOrRandomPercent = windyOrRandomPercent;
+    }
+
+    public void Generate(int sx, int sy, int[,] Map)
+    {
+        _MazeGen.Generate(sx, sy, Map);
+    }
+
+    public void Sparsify(int[,] Map)
+    {
+        _MazeGen.Sparsify(Map);
+    }
+}
+
+public class MazeGen
+{
+    System.Random Rng;
+
+    public bool[,] Visited;
+    List<IntPoint> Fringe;
+
+    public float loopPercent;
+    public float windyOrRandomPercent;
+
+    public MazeGen (int width, int height)
+    {
         Rng = MapGenerator.instance.Rng;
         Visited = new bool[width, height];
         Fringe = new List<IntPoint>();
@@ -27,16 +50,13 @@ public class MazeGenerator : MonoBehaviour
 
     public void Generate(int sx, int sy, int[,] Map)
     {
-        width = Map.GetLength(0);
-        height = Map.GetLength(1);
-
-        if (Map[sx,sy] == 1)
+        if (Map[sx, sy] == 1)
         {
             return;
         }
 
         IntPoint start = new IntPoint(sx, sy);
-        
+
         Fringe.Add(start);
 
         while (Fringe.Count > 0)
@@ -56,7 +76,8 @@ public class MazeGenerator : MonoBehaviour
                 }
                 setPassage(selected, adjPos, Map);
                 Fringe.Add(adjPos);
-            } else
+            }
+            else
             {
                 Fringe.Remove(selected);
             }
@@ -74,7 +95,7 @@ public class MazeGenerator : MonoBehaviour
         {
             return Fringe[Fringe.Count - 1];
         }
-        
+
         //return Fringe[0];
         //return Fringe[Fringe.Count - 1];
     }
@@ -88,8 +109,8 @@ public class MazeGenerator : MonoBehaviour
             long x = Pos.X + (index.X * 2);
             long y = Pos.Y + (index.Y * 2);
 
-            
-            if (x < 0 || x > width - 1 || y < 0 || y > height - 1)
+
+            if (x < 0 || x > Map.GetLength(1) - 1 || y < 0 || y > Map.GetLength(0) - 1)
             {
                 continue;
             }
@@ -99,7 +120,7 @@ public class MazeGenerator : MonoBehaviour
                 continue;
             }
 
-            if (Map[x, y] == TileState && Visited[x,y] == false)
+            if (Map[x, y] == TileState && Visited[x, y] == false)
             {
                 ret.Add(new IntPoint(x, y));
             }
@@ -117,13 +138,13 @@ public class MazeGenerator : MonoBehaviour
 
     public void Sparsify(int[,] Map)
     {
-        int[,] ret = new int[width, height];
+        int[,] ret = new int[Map.GetLength(1), Map.GetLength(0)];
         int count;
         int state;
 
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < Map.GetLength(1); x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Map.GetLength(0); y++)
             {
                 //if (Visited[x,y] == true)
                 //{
@@ -145,7 +166,7 @@ public class MazeGenerator : MonoBehaviour
                     long nx = i.X + x;
                     long ny = i.Y + y;
 
-                    if (nx < 0 || nx > width - 1 || ny < 0 || ny > height - 1)
+                    if (nx < 0 || nx > Map.GetLength(1) - 1 || ny < 0 || ny > Map.GetLength(0) - 1)
                     {
                         continue;
                     }
@@ -167,14 +188,12 @@ public class MazeGenerator : MonoBehaviour
                         //{
                         //    // pick a adjacent wall and dig it out to create loops.
                         //}
-                        
+
                     }
 
                 }
-  
+
             }
         }
     }
-
-
 }

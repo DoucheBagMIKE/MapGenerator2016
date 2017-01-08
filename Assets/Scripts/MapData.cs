@@ -15,10 +15,6 @@ public class LayerInfo
 }
 
 public class MapData {
-    //public static string[] BaseLayers = new string[1]
-    //{
-    //    "Floor"
-    //};
     public static LayerInfo[] BaseLayers = new LayerInfo[3]
     {
         new LayerInfo("Floor", true, true),

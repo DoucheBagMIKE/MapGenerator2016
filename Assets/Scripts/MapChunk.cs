@@ -17,10 +17,6 @@ public class MapChunk
         pos = new IntPoint(x, y); // in chunk corrs.
         gameobject.transform.position.Set(x * chunkSize, y * chunkSize, 0);
 
-        //GameObject go = new GameObject("Collision");
-       //collider = go.AddComponent<PolygonCollider2D>();
-        //go.transform.parent = gameobject.transform;
-
         layers = new Dictionary<string, Layer>();
 
         foreach(LayerInfo layerInfo in MapData.BaseLayers) {

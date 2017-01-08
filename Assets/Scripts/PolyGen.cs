@@ -6,12 +6,7 @@ public static class PolyGen
 {
     static Dictionary<string, Clipper> clippers = new Dictionary<string, Clipper>();
     static Dictionary<string, List<List<IntPoint>>> solutions = new Dictionary<string, List<List<IntPoint>>>();
-
-    //static Clipper clipperObj = new Clipper();
-
     static int[,] map;
-
-    //static List<List<IntPoint>> solution = new List<List<IntPoint>>();
 
     public static void Generate(MapChunk chunk)
     {
@@ -152,46 +147,6 @@ public static class PolyGen
         solutions.Clear();
         clippers.Clear();
     }
-
-    //clipperObj.Execute(ClipType.ctUnion, solution);
-
-    //chunk.collider.pathCount = solution.Count;
-
-    //for (int i = 0; i < solution.Count; i++)
-    //{
-    //    List<Vector2> p = new List<Vector2>();
-
-    //    foreach (IntPoint vert in solution[i])
-    //    {
-    //        p.Add(new Vector2(vert.X, vert.Y));
-    //    }
-
-    //    chunk.collider.SetPath(i, p.ToArray());
-    //}
-
-    //    foreach(string layerName in MapData.BaseLayers)
-    //    {
-    //        foreach (string name in chunk.layers[layerName].subLayerNames())
-    //        {
-    //            SubLayer sub = chunk.layers[layerName].getSubLayer(name);
-
-    //            sub.mesh.Clear();
-    //            sub.mesh.vertices = sub.newVertices.ToArray();
-    //            sub.mesh.triangles = sub.newTriangles.ToArray();
-    //            sub.mesh.uv = sub.newUV.ToArray();
-    //            sub.mesh.Optimize();
-    //            sub.mesh.RecalculateNormals();
-
-    //            sub.newVertices.Clear();
-    //            sub.newTriangles.Clear();
-    //            sub.newUV.Clear();
-    //            sub.TileCount = 0;
-    //        }
-    //    }
-
-    //    solution.Clear();
-    //    clipperObj.Clear();
-    //}
 
     static void GenTile(long x, long y, int ID, SubLayer sub)
     {

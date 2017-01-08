@@ -14,10 +14,10 @@ public class PixelPosition : MonoBehaviour
     void LateUpdate()
     {
         // Reset to the position of the parent
-        transform.localPosition = Vector3.zero;
+        transform.localPosition = new Vector3(0,0,transform.localPosition.z);
 
         // Round the X/Y coordinates of this object in world space
-        var p = transform.position;
+        Vector3 p = transform.position;
         p.x = Mathf.Round(p.x * _pixelsPerUnit) / _pixelsPerUnit;
         p.y = Mathf.Round(p.y * _pixelsPerUnit) / _pixelsPerUnit;
         transform.position = p;

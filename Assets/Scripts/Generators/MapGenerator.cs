@@ -30,10 +30,7 @@ public class MapGenerator : MonoBehaviour {
     public Gradients gradient;
     RandomWalk randomWalk;
     PerlinWorm perlinWorm;
-    PolygonGenerator polyGen;
     LayoutGenerator layoutGen;
-
-    //public int[,] Map;
 
     public int RemoveDeadEndsIterations;
 
@@ -50,7 +47,6 @@ public class MapGenerator : MonoBehaviour {
         gradient = gameObject.GetComponent<Gradients>();
         randomWalk = gameObject.GetComponent<RandomWalk>();
         perlinWorm = gameObject.GetComponent<PerlinWorm>();
-        polyGen = gameObject.GetComponent<PolygonGenerator>();
         layoutGen = gameObject.GetComponent<LayoutGenerator>();
 
         if (randomSeed)
@@ -61,7 +57,6 @@ public class MapGenerator : MonoBehaviour {
         Rng = new System.Random(seed.GetHashCode());
 
         Map = new MapData(width, height);
-        //Map = new int[width, height];
 
     }
 
@@ -82,8 +77,6 @@ public class MapGenerator : MonoBehaviour {
     void Generate ()
     {
         Map = new MapData(width, height);
-        //Map = new int[width, height];
-        mazeGen.Visited = new bool[width, height];
         structGen.rooms.Clear();
 
         if (ca_mask)
