@@ -65,7 +65,6 @@ public static class PolyGen
                             points.Add(new IntPoint(x + 1, y + 1));
 
                             clippers[layername].AddPath(points, PolyType.ptSubject, true);
-                            //clipperObj.AddPath(points, PolyType.ptSubject, true);
                         }
                     }
 
@@ -86,16 +85,15 @@ public static class PolyGen
                                 solutions.Add(layername, new List<List<IntPoint>>());
                             }
 
-                            List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[py, px] - 1);
+                            List<IntPoint> collInfo = MapGenerator.instance.Tmx.getTileColliderInfo(map[py, px]);
                             for (int i = 0; i < collInfo.Count; i++)
                             {
-                                collInfo[i] = new IntPoint((collInfo[i].X / 16) + px, (collInfo[i].Y / 16) + py);
+                                collInfo[i] = new IntPoint((collInfo[i].X) + (px * 16), (collInfo[i].Y) + (py * 16));
                             }
 
                             if (collInfo.Count > 2)
                             {
                                 clippers[layername].AddPath(collInfo, PolyType.ptSubject, true);
-                                //clipperObj.AddPath(collInfo, PolyType.ptSubject, true);
                             }
                         }
                             
@@ -117,7 +115,7 @@ public static class PolyGen
 
                 foreach (IntPoint vert in solutions[layerName][i])
                 {
-                    p.Add(new Vector2(vert.X - chunk.gameobject.transform.position.x, vert.Y - chunk.gameobject.transform.position.y));
+                    p.Add(new Vector2((vert.X/16f) - chunk.gameobject.transform.position.x, (vert.Y/16f) - chunk.gameobject.transform.position.y));
                 }
 
                 chunk.layers[layerName].collider.SetPath(i, p.ToArray());
@@ -171,18 +169,25 @@ public static class PolyGen
         sub.newUV.Add(new Vector2(vMin.x + sub.texUnitX, vMin.y));
 
         sub.TileCount++;
-
-        TmxFile tmx = MapGenerator.instance.Tmx;
-        int firstGID = tmx.tileset[(int)tmx.tileIdToTilesetId(ID)].firstgid;
-        int lID = ID - firstGID;
     }
 
     public static Vector2 TileMin(int id, SubLayer sub)
     {
         TmxFile tmx = MapGenerator.instance.Tmx;
-        int firstGID = tmx.tileset[(int)tmx.tileIdToTilesetId(id)].firstgid;
-        id = id - firstGID;
-        return new Vector2((id % sub.tWidth) / (float)sub.tWidth, (id / sub.tWidth) / (float)sub.tHeight);
+
+        int? idExists = tmx.globalIdToLocalId(id);
+        if (idExists != null)
+        {
+            id = (int)idExists;
+        }
+        
+        float x = (id % sub.tWidth) / (float)sub.tWidth;// X position in tilespace.
+        float y = (id / sub.tWidth) / (float)sub.tHeight;// Y position in tilespace.
+
+        y = (1f - y) - sub.texUnitY;// tiled's tilesets cordanates are top left while unity texture cordanates are bottom left
+                                    // so  we need to flip the Y position and offset it by one tile.
+
+        return new Vector2(x, y);
     }
 }
 

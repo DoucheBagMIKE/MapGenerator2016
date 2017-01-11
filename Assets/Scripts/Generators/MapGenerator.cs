@@ -6,7 +6,7 @@ public class MapGenerator : MonoBehaviour {
 
     public static MapGenerator instance;
 
-    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, AbstractLayoutTest};
+    public enum GenerateType { Maze_Structure, CA_45Rule, RandomWalk, PerlinWorm, MaskTest, AbstractLayoutTest, RoomTest};
 
     public GenerateType GenType;
     public string seed;
@@ -106,6 +106,10 @@ public class MapGenerator : MonoBehaviour {
             case GenerateType.AbstractLayoutTest:
                 layoutGen.Generate();
                 layoutGen.TestMap();
+                break;
+            case GenerateType.RoomTest:
+                SimpleRoomGenerator roomGen = new SimpleRoomGenerator();
+                roomGen.Generate(new IntPoint(0, 0), new IntPoint(10, 10));
                 break;
         }
         ChunkManager.SpawnChunks();

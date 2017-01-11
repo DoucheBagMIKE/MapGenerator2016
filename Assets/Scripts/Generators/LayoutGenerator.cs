@@ -65,8 +65,7 @@ public class LayoutGenerator : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-        rng = MapGenerator.instance.Rng;
-
+        
         Connections = new Graph();
         Zones = new Dictionary<int, Circle>();
 
@@ -77,6 +76,8 @@ public class LayoutGenerator : MonoBehaviour {
     public void Generate ()
 
     {
+        rng = MapGenerator.instance.Rng;
+
         // finge shoule be a list so we can randomly pick any of the items on the fringe. should effect how the levels look. worth a try,
         Queue<int> fringe = new Queue<int>();
 

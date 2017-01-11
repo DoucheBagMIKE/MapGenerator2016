@@ -27,6 +27,7 @@ public class Layer {
             collision = new GameObject("Collision");
             collision.transform.parent = gameobject.transform;
             collider = collision.AddComponent<PolygonCollider2D>();
+            collider.pathCount = 0;
         }
 
     }

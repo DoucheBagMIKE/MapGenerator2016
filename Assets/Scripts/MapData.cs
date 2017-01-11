@@ -15,11 +15,10 @@ public class LayerInfo
 }
 
 public class MapData {
-    public static LayerInfo[] BaseLayers = new LayerInfo[3]
+    public static LayerInfo[] BaseLayers = new LayerInfo[2]
     {
-        new LayerInfo("Floor", true, true),
-        new LayerInfo("Object"),
-        new LayerInfo("Wall")
+        new LayerInfo("Floor"),
+        new LayerInfo("Walls", true),
     };
 
     public int width;

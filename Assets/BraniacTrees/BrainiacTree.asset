@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1fcd920ec5c1d74bb0eb7dc5905895b, type: 3}
+  m_Name: BrainiacTree
+  m_EditorClassIdentifier: 
+  m_serializedData: '{"$type":"Brainiac.BehaviourTree, Assembly-CSharp","Root":{"Position":{"x":0,"y":0},"Name":null,"Comment":null,"Breakpoint":"None","Weight":0,"Child":{"$type":"Brainiac.Sequence,
+    Assembly-CSharp","Position":{"x":10,"y":60},"Name":null,"Comment":null,"Breakpoint":"None","Weight":0,"Children":[{"$type":"Brainiac.DebugLog,
+    Assembly-CSharp","Level":"Info","Message":"This first!","Position":{"x":-90,"y":120},"Name":null,"Comment":null,"Breakpoint":"None","Weight":0,"__UniqueID":"5f4b997f3fbe404386ffc41092c1eb35","Constraints":[],"Services":[]},{"$type":"Brainiac.DebugLog,
+    Assembly-CSharp","Level":"Info","Message":"Then This!","Position":{"x":0,"y":120},"Name":null,"Comment":null,"Breakpoint":"None","Weight":0,"__UniqueID":"1c389601676f482a862dcf09e49c5223","Constraints":[],"Services":[]},{"$type":"Brainiac.Random,
+    Assembly-CSharp","Position":{"x":100,"y":120},"Name":"Random Pick","Comment":null,"Breakpoint":"None","Weight":0,"Children":[{"$type":"Brainiac.DebugLog,
+    Assembly-CSharp","Level":"Info","Message":"i Got Picked!","Position":{"x":110,"y":180},"Name":null,"Comment":null,"Breakpoint":"None","Weight":0,"__UniqueID":"edfc5b43f35547859d37734a9e6af412","Constraints":[],"Services":[]},{"$type":"Brainiac.DebugLog,
+    Assembly-CSharp","Level":"Info","Message":"I got Picked this time!","Position":{"x":200,"y":180},"Name":null,"Comment":null,"Breakpoint":"None","Weight":0,"__UniqueID":"feffec62a23944caaf518b98ecc6c0b5","Constraints":[],"Services":[]}],"__UniqueID":"bdc8bf8db8fd4f329f0d3ac7c08f8833","Constraints":[],"Services":[]}],"__UniqueID":"d993e1b51fa94d9abf95b0bc6dd414d0","Constraints":[],"Services":[]},"__UniqueID":null,"Constraints":[],"Services":[]}}'
+  m_canvasArea:
+    serializedVersion: 2
+    x: -500
+    y: -500
+    width: 1854
+    height: 1262
+  m_subtrees: []

@@ -43,20 +43,28 @@ public class SubLayer {
         TmxFile Tmx = MapGenerator.instance.Tmx;
 
         gameobject = new GameObject(MaterialName);
-        gameobject.transform.parent = parent.transform;
+        if(parent != null)
+        {
+            gameobject.transform.parent = parent.transform;
+        }
+        
 
         mesh = gameobject.AddComponent<MeshFilter>().mesh;
         Renderer rend = gameobject.AddComponent<MeshRenderer>();
+        if (MaterialName == "Floor")
+        {
+            rend.sortingOrder = -1;
+        }
 
         Material mat = GetMaterial(MaterialName);
         rend.material = mat;
 
         tileset t = Tmx.tileset[(int)Tmx.tilesetNametoID(MaterialName)];
 
-        tWidth = t.image.width / TILESIZE;
-        tHeight = t.image.height / TILESIZE;
-        texUnitX = (float)TILESIZE / t.image.width;
-        texUnitY = (float)TILESIZE / t.image.height;
+        tWidth = mat.mainTexture.width / TILESIZE;
+        tHeight = mat.mainTexture.height / TILESIZE;
+        texUnitX = (float)TILESIZE / mat.mainTexture.width;
+        texUnitY = (float)TILESIZE / mat.mainTexture.height;
 
         newVertices = new List<Vector3>();
         newTriangles = new List<int>();

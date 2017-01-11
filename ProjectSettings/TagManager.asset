@@ -14,8 +14,8 @@ TagManager:
   - 
   - 
   - SpriteLayer
-  - 
-  - 
+  - GroundLayer
+  - WallLayer
   - 
   - 
   - 
@@ -38,6 +38,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Emisive
+    uniqueID: 3677567161
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
