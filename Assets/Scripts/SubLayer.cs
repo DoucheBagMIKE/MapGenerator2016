@@ -53,6 +53,10 @@ public class SubLayer {
         Renderer rend = gameobject.AddComponent<MeshRenderer>();
         if (MaterialName == "Floor")
         {
+            rend.sortingOrder = -2;
+        }
+        if (MaterialName == "SideWalls")
+        {
             rend.sortingOrder = -1;
         }
 

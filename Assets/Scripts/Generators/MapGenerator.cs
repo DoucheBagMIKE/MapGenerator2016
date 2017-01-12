@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using ClipperLib;
+using UnitySteer2D.Behaviors;
 
 public class MapGenerator : MonoBehaviour {
 
@@ -109,7 +110,7 @@ public class MapGenerator : MonoBehaviour {
                 break;
             case GenerateType.RoomTest:
                 SimpleRoomGenerator roomGen = new SimpleRoomGenerator();
-                roomGen.Generate(new IntPoint(0, 0), new IntPoint(10, 10));
+                roomGen.Generate(new IntPoint(0, 0), new IntPoint(Map.width - 1, Map.height - 1));
                 break;
         }
         ChunkManager.SpawnChunks();

@@ -96,7 +96,7 @@ public class TmxFile
                         {
                             string[] pos = s[index].Split(',');
                             //Debug.Log(string.Format("{0},{1}", pos[0], pos[1]));
-                            ret.Add(new IntPoint(obj.x + (int)float.Parse(pos[0]), obj.y + (16 - (int)float.Parse(pos[1]))));
+                            ret.Add(new IntPoint(obj.x + Mathf.RoundToInt(float.Parse(pos[0])), Mathf.RoundToInt(obj.y + (16 - (int)float.Parse(pos[1]))))); // we round the input polygon because tiled has a shit collision editor that makes it imposable to get interger points..
                         }
                     }
                     else // if theres no polygon data then it must be a rectangle so we use the position and the width and height to get our four points.

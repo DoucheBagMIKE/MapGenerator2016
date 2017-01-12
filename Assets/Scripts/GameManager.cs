@@ -1,30 +1,29 @@
 ﻿using UnityEngine;
 using System.Collections;
 using ClipperLib;
+using UnitySteer2D.Behaviors;
 
 public class GameManager : MonoBehaviour {
 
-	// Use this for initialization
+    GameObject CameraObj;
 	void Awake () {
         ChunkManager.MapChunks = new GameObject("MapChunks");
 	}
 	
     void Start ()
     {
-        TmxFile Tmx = Serialization<TmxFile>.DeserializeFromXmlFile("Test.Tmx");
-        MapGenerator.instance.Tmx = Tmx;
-
-        SubLayer s = new SubLayer(null, "Walls");
-
-        //Debug.Log(PolyGen.TileMin(9+7, s));
-        //foreach (IntPoint point in Tmx.getTileColliderInfo(9))
-        //{
-        //    Debug.Log(string.Format("{0},{1}", point.X, point.Y));
-        //}
-
+        CameraObj = GameObject.FindGameObjectWithTag("MainCamera");
+        Vector3 P = GameObject.FindGameObjectWithTag("Player").transform.position;
+        P.z = -10;
+        CameraObj.transform.position = P;
     }
-	// Update is called once per frame
-	void Update () {
+
+
+	void LateUpdate () {
         ChunkManager.Redraw();
+        for(int i = 0; i < 2; i++)
+        {
+            CameraObj.transform.GetChild(i).rotation = Quaternion.identity;
+        }
 	}
 }

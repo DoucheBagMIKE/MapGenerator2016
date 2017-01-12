@@ -148,6 +148,8 @@ public static class PolyGen
 
     static void GenTile(long x, long y, int ID, SubLayer sub)
     {
+        //float x = Mathf.Round(lx);
+        //float y = Mathf.RoundToInt(ly);
         int tID = (int)MapGenerator.instance.Tmx.tileIdToTilesetId(ID);
 
         sub.newVertices.Add(new Vector3(x, y, 0));// (0,0) 0
