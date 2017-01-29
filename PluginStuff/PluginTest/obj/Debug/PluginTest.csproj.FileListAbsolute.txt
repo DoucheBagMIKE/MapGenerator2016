@@ -1,0 +1,5 @@
+C:\UnityProject\AddinsTest\Assets\Plugins\PluginTest.dll
+C:\UnityProject\AddinsTest\Assets\Plugins\PluginTest.pdb
+C:\UnityProject\AddinsTest\PluginTest\obj\Debug\PluginTest.csprojResolveAssemblyReference.cache
+C:\UnityProject\AddinsTest\PluginTest\obj\Debug\PluginTest.dll
+C:\UnityProject\AddinsTest\PluginTest\obj\Debug\PluginTest.pdb

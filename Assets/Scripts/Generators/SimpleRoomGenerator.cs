@@ -18,6 +18,9 @@ public class SimpleRoomGenerator {
         int[,] floor = Map.layer["Floor"];
         int[,] walls = Map.layer["Walls"];
 
+        TilesetInfo tsInfo = ResourceManager.tilesetInfo["Walls"] as TilesetInfo;
+        int wallid = tsInfo.firstGid;
+
         if (pos.X < 0 || pos.X + size.X > Map.width || pos.Y < 0 || pos.Y + size.Y > Map.height)// Rect out of Bounds
         {
             return;
@@ -27,36 +30,25 @@ public class SimpleRoomGenerator {
         {
             for (int x = (int)pos.X; x < pos.X + size.X; x++)
             {
-                floor[y, x] = 1;
-
-                
-                
+                floor[y, x] = 0;
+                walls[y, x] = 0;
 
                 if (y == pos.Y || y == pos.Y + size.Y - 1 || x == pos.X || x == pos.X + size.X - 1)// if x,y lies on the edge of the rect.
                 {
-                    walls[y, x] = 9;
+                    walls[y, x] = wallid;
                     WallsList.Add(new IntPoint(x, y));
                 } else
                 {
+                    
                     if (MapGenerator.instance.Rng.Next(0, 11) == 10)
                     {
-                        walls[y, x] = 9;
+                        walls[y, x] = wallid;
                         WallsList.Add(new IntPoint(x, y));
+                    } else
+                    {
+                        floor[y, x] = 1;
                     }
                 }
-            }
-        }
-        // autotle the walls tops and add in wall sides.
-        foreach (IntPoint wPos in WallsList)
-        {
-            walls[wPos.Y, wPos.X] = TileBitMasking.GetTile(walls, wPos, 9);
-
-            if (
-                ((walls[wPos.Y, wPos.X] >= Tmx.tileset[(int)Tmx.tileIdToTilesetId(9)].firstgid &&
-                walls[wPos.Y, wPos.X] <= 7 + Tmx.tileset[(int)Tmx.tileIdToTilesetId(9)].firstgid))
-                && wPos.Y - 1 >= 0 && walls[wPos.Y - 1, wPos.X] == 0)
-            {
-                walls[wPos.Y - 1, wPos.X] = 25;
             }
         }
     }

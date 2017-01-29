@@ -16,8 +16,8 @@ TagManager:
   - SpriteLayer
   - GroundLayer
   - WallLayer
-  - 
-  - 
+  - SideWallLayer
+  - Debug
   - 
   - 
   - 

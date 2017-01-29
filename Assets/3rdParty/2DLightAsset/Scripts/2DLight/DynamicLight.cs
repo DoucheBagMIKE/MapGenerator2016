@@ -12,6 +12,7 @@ public class verts
 }
 
 public class DynamicLight : MonoBehaviour {
+    public static Camera Cam;
 
     // Public variables
 
@@ -42,6 +43,8 @@ public class DynamicLight : MonoBehaviour {
 
 	// Called at beginning of script execution
 	void Start () {
+
+        Cam = GameObject.FindGameObjectWithTag("MainCamera").transform.GetChild(0).gameObject.GetComponent<Camera>();
 
 		TablaSenoCoseno.initSenCos();
 
@@ -76,9 +79,9 @@ public class DynamicLight : MonoBehaviour {
         if (!isDirty)
             return;
         // if light is within the cameraView  DO: Update
-        var vertExtent = Camera.main.orthographicSize;
+        var vertExtent = Cam.orthographicSize;
         var horzExtent = vertExtent * Screen.width / Screen.height;
-        Vector3 cPos = Camera.main.transform.position;
+        Vector3 cPos = Cam.transform.position;
 
         if (Utility.Intersects(new Rect(cPos.x, cPos.y, horzExtent, vertExtent), new Circle(gameObject.transform.position, lightRadius).Rect))
         {

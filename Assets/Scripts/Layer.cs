@@ -5,6 +5,7 @@ public class Layer {
 
     public bool Collisions = false;
     public bool emptyTileCollisionRule = false;
+    public bool AutoTile = false;
 
     Dictionary<string, SubLayer> subLayers;
 
@@ -12,7 +13,7 @@ public class Layer {
     public GameObject collision;
     public PolygonCollider2D collider;
 
-    public Layer (GameObject Parent, string Name, bool UseCollision= false, bool useEmptyTileCollisionRule = false)
+    public Layer (GameObject Parent, string Name, bool UseCollision= false, bool useEmptyTileCollisionRule = false, bool useAutoTile= false)
     {       
         subLayers = new Dictionary<string, SubLayer>();
 
@@ -28,7 +29,13 @@ public class Layer {
             collision.transform.parent = gameobject.transform;
             collider = collision.AddComponent<PolygonCollider2D>();
             collider.pathCount = 0;
+            if (Name == "Walls")
+            {
+                collision.layer = 10;
+            }
         }
+        if (useAutoTile)
+            AutoTile = useAutoTile;
 
     }
 

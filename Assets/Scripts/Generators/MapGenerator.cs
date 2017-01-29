@@ -2,6 +2,44 @@
 using System.Collections.Generic;
 using ClipperLib;
 using UnitySteer2D.Behaviors;
+using System;
+
+public interface IMapGenerator
+{
+    void Generate();
+}
+
+public abstract class MapGeneratorBase : IMapGenerator
+{
+    public System.Random Rng;
+    public MapData Map;
+    string seed;
+    public string Seed
+    {
+        get { return seed; }
+        set
+        {
+            seed = value;
+            Rng = new System.Random(seed.GetHashCode());
+        }
+    }
+    bool randomSeed;
+
+    public MapGeneratorBase (MapData Map, bool RandomSeed= true)
+    {
+        this.Map = Map;
+
+        if (RandomSeed)
+            this.seed = DateTime.Now.ToString();
+        else
+            this.seed = "";
+
+        Rng = new System.Random(seed.GetHashCode());
+    }
+
+    public abstract void Generate();
+
+}
 
 public class MapGenerator : MonoBehaviour {
 
@@ -105,14 +143,22 @@ public class MapGenerator : MonoBehaviour {
                 Map.layer["Floor"] = Utility.floodfill(width / 2, height / 2, rule45.Generate(width, height));
                 break;
             case GenerateType.AbstractLayoutTest:
-                layoutGen.Generate();
-                layoutGen.TestMap();
+                var cavegen = new CaveGenerator(Map);
+                // overall Layout params.
+                cavegen.maxConnectionsPerZone = 3;
+                cavegen.MAXDISTFORCONNECTION = 4;
+                cavegen.maxZoneRadius = 8;
+                cavegen.minZoneRadius = 4;
+                cavegen.MINLENGTHOFLOOP = 8;
+
+                cavegen.Generate();
                 break;
             case GenerateType.RoomTest:
                 SimpleRoomGenerator roomGen = new SimpleRoomGenerator();
                 roomGen.Generate(new IntPoint(0, 0), new IntPoint(Map.width - 1, Map.height - 1));
                 break;
         }
+        TileBitMasking.autoTileAllBaseLayers();
         ChunkManager.SpawnChunks();
     }
 

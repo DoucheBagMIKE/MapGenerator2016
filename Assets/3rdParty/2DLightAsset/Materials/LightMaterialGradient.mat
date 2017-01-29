@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: LightMaterialGradient
-  m_Shader: {fileID: 4800000, guid: 1a9d885d849134a4a8e49921c12f8acd, type: 3}
+  m_Shader: {fileID: 4800000, guid: b21e2d9c14438bc489228be2acbc8179, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 5
   m_CustomRenderQueue: -1
@@ -27,23 +27,23 @@ Material:
       second: 1
     - first:
         name: _Offset
-      second: 0.92
+      second: 0.1
     - first:
         name: _UVXOffset
       second: 0
     - first:
         name: _UVXScale
-      second: 0.01
+      second: 0.25
     - first:
         name: _UVYOffset
       second: 0
     - first:
         name: _UVYScale
-      second: 0.01
+      second: 0.25
     m_Colors:
     - first:
         name: _Color
-      second: {r: 1, g: 1, b: 0.818, a: 1}
+      second: {r: 1, g: 1, b: 1, a: 1}
     - first:
         name: _TintColor
       second: {r: 0.8050233, g: 0.9852941, b: 0.39121974, a: 1}

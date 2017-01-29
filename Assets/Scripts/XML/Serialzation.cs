@@ -9,7 +9,7 @@ public static class Serialization<T> where T : class
     {
         if (!File.Exists(fileName))
         {
-            Debug.Log(string.Format("No file in this directory named {0}", fileName));
+            Debug.Log(string.Format("No file at Path {0}", fileName));
             return null;
         }
 

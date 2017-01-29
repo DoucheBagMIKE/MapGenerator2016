@@ -128,4 +128,7 @@
    </objectgroup>
   </tile>
  </tileset>
+ <tileset firstgid="29" name="WoodWalls" tilewidth="16" tileheight="16" tilecount="16">
+  <image source="Assets/Art/Tilesets/WoodWalls.png" trans="ffffff" width="64" height="64"/>
+ </tileset>
 </map>

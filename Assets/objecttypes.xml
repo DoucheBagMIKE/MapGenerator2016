@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="BaseType" color="#a0a0a4">
+  <property name="SomeBool" type="bool" default="true"/>
+  <property name="SomeColor" type="color" default="#ffffff7f"/>
+  <property name="SomeFile" type="file" default="../../../Users/Mike/AppData/LocalLow/ShadyPixel/MapGenerator2016/Tilesets/Walls.tsx"/>
+  <property name="SomeFloat" type="float" default="1.2"/>
+  <property name="SomeInt" type="int" default="0"/>
+  <property name="SomeString" type="string" default="Some Defaault Value."/>
+ </objecttype>
+ <objecttype name="Derived" color="#a0a0a4">
+  <property name="DerivedProp" type="string" default="PoopFace"/>
+  <property name="InheritFrom" type="string" default="BaseType"/>
+ </objecttype>
+  <objecttype name="Derived2" color="#a0a0a4">
+    <property name="DerivedProp" type="string" default="PoopFace"/>
+    <property name="SomeBool" type="bool" default="true"/>
+    <property name="SomeColor" type="color" default="#ffffff7f"/>
+    <property name="SomeFile" type="file" default="../../../Users/Mike/AppData/LocalLow/ShadyPixel/MapGenerator2016/Tilesets/Walls.tsx"/>
+    <property name="SomeFloat" type="float" default="1.2"/>
+    <property name="SomeInt" type="int" default="0"/>
+    <property name="SomeString" type="string" default="Some Defaault Value."/>
+  </objecttype>
+</objecttypes>

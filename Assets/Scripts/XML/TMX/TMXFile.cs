@@ -3,21 +3,13 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using ClipperLib;
 
-//    <? xml version="1.0" encoding="UTF-8"?>
-//<map version = "1.0" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" nextobjectid="1">
-// <tileset firstgid = "1" name="Floor" tilewidth="16" tileheight="16" tilecount="819" columns="21">
-//  <image source = "Assets/DawnLike/Objects/Floor.png" trans="ffffff" width="336" height="624"/>
-// </tileset>
-// <tileset firstgid = "820" name="Wall" tilewidth="16" tileheight="16" tilecount="1020" columns="20">
-//  <image source = "Assets/DawnLike/Objects/Wall.png" trans="ffffff" width="320" height="816"/>
-// </tileset>
-//</map>
-
 [XmlRoot("map")]
 public class TmxFile
 {
     [XmlElement]
     public List<tileset> tileset { get; set; }
+    [XmlElement]
+    public properties properties { get; set;}
 
     public string tileIdToTilesetName(int id)
     {
@@ -116,6 +108,8 @@ public class TmxFile
     }
 
 }
+[XmlRoot("tileset")]
+public class TsxFile : tileset { }
 
 public class tileset
 {
@@ -134,8 +128,9 @@ public class tileset
     [XmlElement]
     public image image { get; set; }
     [XmlElement]
-    public tile[] tile { get; set; }
-    
+    public tile[] tile { get; set; }    
+    [XmlElement]
+    public properties properties { get; set; }
 }
 
 public class image
@@ -185,4 +180,18 @@ public class tmxPolygon
 {
     [XmlAttribute]
     public string points { get; set; }
+}
+
+public class properties
+{
+    [XmlElement]
+    public property[] property { get; set; }
+}
+
+public class property
+{
+    [XmlAttribute]
+    public string name { get; set; }
+    [XmlAttribute]
+    public string value { get; set; }
 }

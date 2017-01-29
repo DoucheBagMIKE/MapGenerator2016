@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="Enemy" color="#ff0000"/>
+ <objecttype name="Trap" color="#55007f"/>
+ <objecttype name="Item" color="#ffff00"/>
+</objecttypes>

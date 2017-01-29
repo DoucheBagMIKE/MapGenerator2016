@@ -1,0 +1,11 @@
+C:\UnityProject\AddinsTest\PluginContracts\bin\Debug\PluginContracts.dll
+C:\UnityProject\AddinsTest\PluginContracts\bin\Debug\PluginContracts.pdb
+C:\UnityProject\AddinsTest\PluginContracts\obj\Debug\PluginContracts.csprojResolveAssemblyReference.cache
+C:\UnityProject\AddinsTest\PluginContracts\obj\Debug\PluginContracts.dll
+C:\UnityProject\AddinsTest\PluginContracts\obj\Debug\PluginContracts.pdb
+C:\UnityProject\AddinsTest\Assets\PluginContracts.dll
+C:\UnityProject\AddinsTest\Assets\PluginContracts.pdb
+C:\UnityProject\AddinsTest\Assets\Plugins\PluginContracts.dll
+C:\UnityProject\AddinsTest\Assets\Plugins\PluginContracts.pdb
+C:\UnityProject\AddinsTest\Assets\PluginContracts\PluginContracts.dll
+C:\UnityProject\AddinsTest\Assets\PluginContracts\PluginContracts.pdb

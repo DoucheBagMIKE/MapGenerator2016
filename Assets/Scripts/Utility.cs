@@ -2,7 +2,7 @@
 using ClipperLib;
 using System.Collections.Generic;
 
-public class Utility {
+public static class Utility {
     public static IntPoint[] dirs = new IntPoint[4] { new IntPoint(-1, 0), new IntPoint(0, 1), new IntPoint(1, 0), new IntPoint(0, -1) };
     static Queue<IntPoint> fringe = new Queue<IntPoint>();
 
@@ -281,5 +281,71 @@ public class Utility {
         return new Vector2(Mathf.Round(x), Mathf.Round(y));
     }
 
+    public static Vector2 PointOnCircle (float radius)
+    {
+        float angle = (float)MapGenerator.instance.Rng.NextDouble() * Mathf.PI * 2;
+
+        return new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
+    }
+
+    public static Vector2 LineIntersectionPoint(Vector2 ps1, Vector2 pe1, Vector2 ps2, Vector2 pe2)
+    {
+        // Get A,B,C of first line - points : ps1 to pe1
+        float A1 = pe1.y - ps1.y;
+        float B1 = ps1.x - pe1.x;
+        float C1 = A1 * ps1.x + B1 * ps1.y;
+
+        // Get A,B,C of second line - points : ps2 to pe2
+        float A2 = pe2.y - ps2.y;
+        float B2 = ps2.x - pe2.x;
+        float C2 = A2 * ps2.x + B2 * ps2.y;
+
+        // Get delta and check if the lines are parallel
+        float delta = A1 * B2 - A2 * B1;
+        if (delta == 0)
+            throw new System.Exception("Lines are parallel");
+
+        // now return the Vector2 intersection point
+        return new Vector2(
+            (B2 * C1 - B1 * C2) / delta,
+            (A1 * C2 - A2 * C1) / delta
+        );
+    }
+    public static bool LineIntersection(Vector2 ps1, Vector2 pe1, Vector2 ps2, Vector2 pe2)
+    {
+        // Get A,B,C of first line - points : ps1 to pe1
+        float A1 = pe1.y - ps1.y;
+        float B1 = ps1.x - pe1.x;
+        float C1 = A1 * ps1.x + B1 * ps1.y;
+
+        // Get A,B,C of second line - points : ps2 to pe2
+        float A2 = pe2.y - ps2.y;
+        float B2 = ps2.x - pe2.x;
+        float C2 = A2 * ps2.x + B2 * ps2.y;
+
+        // Get delta and check if the lines are parallel
+        float delta = A1 * B2 - A2 * B1;
+        if (delta == 0)
+            return false;
+
+        // now return the Vector2 intersection point
+        return true;
+    }
+    public static bool LineIntersectsRect (Vector2 lStart, Vector2 lEnd, Rect rect)
+    {
+        bool bottom = LineIntersection(lStart, lEnd, new Vector2(rect.xMin, rect.yMin), new Vector2(rect.xMax, rect.yMin));
+        bool  top = LineIntersection(lStart, lEnd, new Vector2(rect.xMin, rect.yMax), new Vector2(rect.xMax, rect.yMax));
+        bool left = LineIntersection(lStart, lEnd, new Vector2(rect.xMin, rect.yMin), new Vector2(rect.xMin, rect.yMax));
+        bool right = LineIntersection(lStart, lEnd, new Vector2(rect.xMax, rect.yMin), new Vector2(rect.xMax, rect.yMax));
+        bool[] bools = new bool[4] { bottom, top, left, right };
+
+        foreach (bool b in bools)
+        {
+            if (b == true)
+                return true;
+        }
+
+        return false;
+    }
 
 }

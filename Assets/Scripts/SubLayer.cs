@@ -16,7 +16,7 @@ public class SubLayer {
     public int tHeight;// height in tiles.
     public float texUnitX;//width of one tile in Texture Units.
     public float texUnitY;//height of one tile in Texture Units.
-
+    public bool autoTile;
     static Material GetMaterial (string MaterialName)
     {
         if (!Materials.ContainsKey(MaterialName))
@@ -40,7 +40,7 @@ public class SubLayer {
 
     public SubLayer (GameObject parent, string MaterialName)
     {
-        TmxFile Tmx = MapGenerator.instance.Tmx;
+        //TmxFile Tmx = MapGenerator.instance.Tmx;
 
         gameobject = new GameObject(MaterialName);
         if(parent != null)
@@ -60,10 +60,12 @@ public class SubLayer {
             rend.sortingOrder = -1;
         }
 
-        Material mat = GetMaterial(MaterialName);
+        TilesetInfo info = ResourceManager.tilesetInfo[MaterialName] as TilesetInfo;
+
+        Material mat = info.material;
         rend.material = mat;
 
-        tileset t = Tmx.tileset[(int)Tmx.tilesetNametoID(MaterialName)];
+        //tileset t = Tmx.tileset[(int)Tmx.tilesetNametoID(MaterialName)];
 
         tWidth = mat.mainTexture.width / TILESIZE;
         tHeight = mat.mainTexture.height / TILESIZE;
