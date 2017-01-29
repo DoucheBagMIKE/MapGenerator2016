@@ -1,0 +1,5 @@
+C:\Users\chris\UnityProjects\MapGenerator2016\Assets\Plugins\TestPlugin.dll
+C:\Users\chris\UnityProjects\MapGenerator2016\Assets\Plugins\TestPlugin.pdb
+C:\Users\chris\UnityProjects\MapGenerator2016\TestPlugin\obj\Debug\TestPlugin.csprojResolveAssemblyReference.cache
+C:\Users\chris\UnityProjects\MapGenerator2016\TestPlugin\obj\Debug\TestPlugin.dll
+C:\Users\chris\UnityProjects\MapGenerator2016\TestPlugin\obj\Debug\TestPlugin.pdb

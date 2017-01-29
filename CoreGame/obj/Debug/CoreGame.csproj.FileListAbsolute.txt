@@ -1,0 +1,5 @@
+C:\Users\chris\UnityProjects\MapGenerator2016\Assets\Plugins\CoreGame.dll
+C:\Users\chris\UnityProjects\MapGenerator2016\Assets\Plugins\CoreGame.pdb
+C:\Users\chris\UnityProjects\MapGenerator2016\CoreGame\obj\Debug\CoreGame.csprojResolveAssemblyReference.cache
+C:\Users\chris\UnityProjects\MapGenerator2016\CoreGame\obj\Debug\CoreGame.dll
+C:\Users\chris\UnityProjects\MapGenerator2016\CoreGame\obj\Debug\CoreGame.pdb

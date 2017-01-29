@@ -4,6 +4,7 @@ using System.Diagnostics;
 using TickedPriorityQueue;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using UnityEngine.Profiling;
 
 namespace UnitySteer2D.Behaviors
 {

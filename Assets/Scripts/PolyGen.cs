@@ -130,7 +130,7 @@ public static class PolyGen
                 sub.mesh.vertices = sub.newVertices.ToArray();
                 sub.mesh.triangles = sub.newTriangles.ToArray();
                 sub.mesh.uv = sub.newUV.ToArray();
-                sub.mesh.Optimize();
+                //sub.mesh.Optimize();
                 sub.mesh.RecalculateNormals();
 
                 sub.newVertices.Clear();

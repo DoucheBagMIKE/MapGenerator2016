@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
+using UnitySteer2D;
 using UnitySteer.Attributes;
 
 namespace UnitySteer.Editor

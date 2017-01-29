@@ -1,0 +1,5 @@
+C:\Users\chris\UnityProjects\MapGenerator2016\Assets\Plugins\PluginContracts.dll
+C:\Users\chris\UnityProjects\MapGenerator2016\Assets\Plugins\PluginContracts.pdb
+C:\Users\chris\UnityProjects\MapGenerator2016\PluginContracts\obj\Debug\PluginContracts.csprojResolveAssemblyReference.cache
+C:\Users\chris\UnityProjects\MapGenerator2016\PluginContracts\obj\Debug\PluginContracts.dll
+C:\Users\chris\UnityProjects\MapGenerator2016\PluginContracts\obj\Debug\PluginContracts.pdb

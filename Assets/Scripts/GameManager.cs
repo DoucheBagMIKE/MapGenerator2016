@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 using System.IO;
+
+using System.Collections.Generic;
+using SimplePlugin;
+using Contracts.Abstract;
+using Contracts.Interfaces;
 public class GameManager : MonoBehaviour {
 
     GameObject CameraObj;
@@ -10,6 +15,12 @@ public class GameManager : MonoBehaviour {
         ResourceManager.LoadTileset("Walls");
         ResourceManager.LoadTileset("SideWalls");
         ResourceManager.LoadTileset("WoodWalls");
+
+        ICollection<IMapGenerator> plugins = GenericPluginLoader<IMapGenerator>.LoadPlugins(Application.dataPath + "/Plugins");
+        foreach (IPlugin item in plugins)
+        {
+            Debug.Log(item.Name);
+        }
     }
 	
     void Start ()
